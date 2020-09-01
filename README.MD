@@ -1,6 +1,6 @@
 # The Brief:
 
-Kotlin app for communicating with other users.
+Kotlin messaging app.
 
 ## Description
 
