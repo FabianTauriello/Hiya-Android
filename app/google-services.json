@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1013184732246",
+    "firebase_url": "https://hiya-57ff9.firebaseio.com",
+    "project_id": "hiya-57ff9",
+    "storage_bucket": "hiya-57ff9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013184732246:android:98b0c6232606b209766ff7",
+        "android_client_info": {
+          "package_name": "io.github.fabiantauriello.hiya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013184732246-u4ta6s9kegamubj154ogvopnud5cv2ou.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdqctgaEho7U1t8l-ZtPMrCDenNZpbY0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013184732246-u4ta6s9kegamubj154ogvopnud5cv2ou.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
