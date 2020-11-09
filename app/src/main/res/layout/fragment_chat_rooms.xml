@@ -4,28 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChatsFragment">
+    tools:context=".ui.main.ChatRoomsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_chat_threads"
+        android:id="@+id/rvChatRooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/chat_item" >
-
-    </androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/fabNewMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        tools:listitem="@layout/chat_item"
         android:clickable="true"
-        android:src="@drawable/ic_chats"
+        android:src="@drawable/ic_new_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_in_navigation"
+    app:startDestination="@id/numberEntryFragment">
+
+    <fragment
+        android:id="@+id/codeEntryFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.registration.CodeEntryFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_code_entry" >
+        <argument
+            android:name="verificationId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_codeEntryFragment_to_profileEntryFragment"
+            app:destination="@id/profileEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/numberEntryFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.registration.NumberEntryFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_number_entry" >
+        <action
+            android:id="@+id/action_numberEntryFragment_to_codeEntryFragment"
+            app:destination="@id/codeEntryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileEntryFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.registration.ProfileEntryFragment"
+        android:label="fragment_profile_entry"
+        tools:layout="@layout/fragment_profile_entry" />
+
+</navigation>

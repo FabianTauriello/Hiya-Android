@@ -6,17 +6,21 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 29 // this has nothing to do with what devices can and cannot run your app. Usually, you set this to be the latest version of the Android SDK
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "io.github.fabiantauriello.hiya"
-        minSdkVersion 21
+        minSdkVersion 21 // this affects the number of devices the app can run on
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     buildTypes {
@@ -28,6 +32,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
 
 }
@@ -44,13 +49,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
-    implementation 'com.google.firebase:firebase-auth-ktx:19.3.1'
-    implementation 'com.google.firebase:firebase-storage:19.1.1'
-    implementation 'com.google.firebase:firebase-database:19.3.1'
-    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
-    implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
-    implementation 'com.google.android.gms:play-services-auth:18.0.0'
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    // circular image view
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     // Navigation
     def nav_version = "2.3.0-rc01"
@@ -60,5 +67,11 @@ dependencies {
     // Material Design
     def mat_version = "1.1.0"
     implementation "com.google.android.material:material:$mat_version"
+
+    // Glide
+    def glide_version = "4.11.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
 
 }

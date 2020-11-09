@@ -3,25 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/chatsFragment">
+    app:startDestination="@id/chatRoomsFragment">
 
     <fragment
-        android:id="@+id/chatsFragment"
-        android:name="io.github.fabiantauriello.hiya.ChatsFragment"
+        android:id="@+id/chatRoomsFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.ChatRoomsFragment"
         android:label="fragment_chats"
-        tools:layout="@layout/fragment_chats" >
+        tools:layout="@layout/fragment_chat_rooms" >
         <action
-            android:id="@+id/action_chatsFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            android:id="@+id/action_chatRoomsFragment_to_chatLogFragment"
+            app:destination="@id/chatLogFragment" />
+        <action
+            android:id="@+id/action_chatRoomsFragment_to_newMessageDialog"
+            app:destination="@id/newMessageDialog" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="io.github.fabiantauriello.hiya.SettingsFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="io.github.fabiantauriello.hiya.ChatFragment"
+        android:id="@+id/chatLogFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.ChatLogFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat_log" >
+        <argument
+            android:name="roomId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/newMessageDialog"
+        android:name="io.github.fabiantauriello.hiya.ui.main.NewMessageDialog"
+        android:label="NewMessageDialog" >
+        <action
+            android:id="@+id/action_newMessageDialog_to_chatLogFragment"
+            app:destination="@id/chatLogFragment" />
+    </dialog>
 </navigation>
