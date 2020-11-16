@@ -36,6 +36,7 @@
         android:layout_width="40dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_send_btn"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="@+id/etNewMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/etNewMessage" />

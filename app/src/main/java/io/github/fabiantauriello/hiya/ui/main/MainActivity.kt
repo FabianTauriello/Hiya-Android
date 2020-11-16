@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
 import io.github.fabiantauriello.hiya.R
+import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -16,6 +18,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(LOG_TAG, "onCreate() called")
         super.onCreate(savedInstanceState)
+
+        // set global variable user id for easy access to user node in Firestore
+        Hiya.userId = FirebaseAuth.getInstance().uid!!
 
         // initialize binding
         val binding =

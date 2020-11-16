@@ -1,8 +1,5 @@
 package io.github.fabiantauriello.hiya.ui.main
 
-import android.database.Cursor
-import android.provider.ContactsContract
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,11 +8,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.ContactItemBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import io.github.fabiantauriello.hiya.domain.Contact
 
 class ContactsAdapter(
-    private val list: ArrayList<Pair<String, String>>,
+    private val contactList: Array<Contact>,
     private val listener: ContactClickListener
 ) : RecyclerView.Adapter<ContactsAdapter.ContactItemViewHolder>() {
 
@@ -35,7 +31,7 @@ class ContactsAdapter(
         return ContactItemViewHolder(binding)
     }
 
-    override fun getItemCount() = list.size
+    override fun getItemCount() = contactList.size
 
     override fun onBindViewHolder(holder: ContactItemViewHolder, position: Int) {
 //        cursor.moveToPosition(position)
@@ -49,24 +45,19 @@ class ContactsAdapter(
 //            .override(450, 600)
             .error(R.drawable.ic_broken_image)
         Glide.with(holder.binding.ivContactPicture.context)
-            .load(list[position].second)
+            .load(contactList[position].profileImageUri)
             .apply(options)
             .into(holder.binding.ivContactPicture)
 
         // set name
-        holder.binding.tvContactName.text = list[position].first
+        holder.binding.tvContactName.text = contactList[position].name
 
         // set click listener
         holder.binding.layoutContactItem.setOnClickListener {
-            listener.onContactClick()
+            listener.onContactClick(contactList[position])
         }
 
     }
 
-    fun updateList(item: Pair<String, String>) {
-        list.add(item)
-        list.sortBy { it.first }
-        notifyDataSetChanged()
-    }
 
 }

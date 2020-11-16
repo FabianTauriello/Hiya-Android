@@ -1,34 +1,50 @@
 package io.github.fabiantauriello.hiya.domain
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 data class User(
     val name: String,
     val phoneNumber: String,
-    val profileImageUri: String,
-    val rooms: ArrayList<Pair<String, Boolean>>
+    val profileImageUri: String? = null
 )
+
+@Parcelize
+data class Contact(
+    val id: String,
+    val name: String,
+    val profileImageUri: String?
+) : Parcelable
 
 data class Message(
-    val sender: String,
     val text: String,
-    val timestamp: String
+    val timestamp: String,
+    val sender: String
 )
 
-data class FirebaseChatRoom(
-    val lastMessage: String,
-    val lastMessageTimestamp: String
+sealed class ChatRoom(
+    val participants: ArrayList<String>,
+    val lastMessage: String?,
+    val lastMessageTimestamp: String?
 )
 
-data class ChatRoom(
+class PrivateChatRoom(
+    participants: ArrayList<String>,
+    lastMessage: String?,
+    lastMessageTimestamp: String?
+) : ChatRoom(participants, lastMessage, lastMessageTimestamp)
+
+//class GroupChatRoom(
+//    val name: String,
+//    val photoUri: String,
+//    participants: ArrayList<String>,
+//    lastMessage: String?,
+//    lastMessageTimestamp: String?
+//) : ChatRoom(participants, lastMessage, lastMessageTimestamp)
+
+// TODO for rooms rv only
+data class ChatRoomItem(
     val id: String,
-    val title: String = "", // default it empty for private chat rooms
     val lastMessage: String,
     val lastMessageTimestamp: String
-) {
-    override fun equals(other: Any?): Boolean {
-        return if (other is ChatRoom) {
-            this.id == other.id
-        } else {
-            false
-        }
-    }
-}
+)

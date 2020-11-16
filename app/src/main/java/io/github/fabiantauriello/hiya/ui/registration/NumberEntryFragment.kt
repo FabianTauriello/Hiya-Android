@@ -33,21 +33,12 @@ class NumberEntryFragment : Fragment() {
 
         _binding = FragmentNumberEntryBinding.inflate(inflater, container, false)
 
-        checkIfUserIsAlreadySignedIn()
         configureNextButtonListener()
 
         // Inflate the layout for this fragment
         return binding.root
     }
 
-    private fun checkIfUserIsAlreadySignedIn() {
-        // Check if user is signed in (non-null)
-        val currentUser = Firebase.auth.currentUser
-        if(currentUser != null) {
-            Log.d(LOG_TAG, "user currently signed in... ${currentUser.displayName}, ${currentUser.email} ")
-            startMainActivity()
-        }
-    }
 
     private fun configureNextButtonListener() {
         binding.btnNext.setOnClickListener {
@@ -113,14 +104,7 @@ class NumberEntryFragment : Fragment() {
 
     }
 
-    private fun startMainActivity() {
-        // Prepare and launch MainActivity
-        val intent = Intent(activity, MainActivity::class.java)
-        startActivity(intent)
 
-        // Destroy SignInActivity
-        requireActivity().finish()
-    }
 
 
 }

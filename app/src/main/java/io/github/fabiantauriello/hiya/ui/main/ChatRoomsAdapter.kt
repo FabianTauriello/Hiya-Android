@@ -4,12 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.QuerySnapshot
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.ChatRoomItemBinding
-import io.github.fabiantauriello.hiya.domain.ChatRoom
+import io.github.fabiantauriello.hiya.domain.ChatRoomItem
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatRoomsAdapter(
-    private val chatRooms: ArrayList<ChatRoom>,
+    private val chatRooms: ArrayList<ChatRoomItem>,
     private val listener: ChatRoomClickListener
 ) : RecyclerView.Adapter<ChatRoomsAdapter.ChatRoomItemViewHolder>() {
 
@@ -28,7 +31,6 @@ class ChatRoomsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatRoomItemViewHolder, position: Int) {
-        holder.binding.tvChatRoomTitle.text = chatRooms[position].title
         holder.binding.tvChatLastMessage.text = chatRooms[position].lastMessage
         holder.binding.tvLastMessageTimestamp.text = chatRooms[position].lastMessageTimestamp
 
@@ -40,14 +42,9 @@ class ChatRoomsAdapter(
 
     override fun getItemCount() = chatRooms.size
 
-    fun update(chatRoom: ChatRoom) {
-        // update existing chat room or add a new chat room to list
-        if (chatRooms.contains(chatRoom)) {
-            chatRooms[chatRooms.indexOf(chatRoom)] = chatRoom
-        } else {
-            chatRooms.add(chatRoom)
-        }
-        notifyDataSetChanged()
+    fun replaceAllRooms(newChatRooms: ArrayList<ChatRoomItem>) {
+        chatRooms.clear()
+        chatRooms.addAll(newChatRooms)
     }
 
 

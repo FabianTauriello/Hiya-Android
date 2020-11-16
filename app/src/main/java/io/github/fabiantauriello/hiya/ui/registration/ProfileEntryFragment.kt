@@ -6,13 +6,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentProfileEntryBinding
 import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.ui.main.MainActivity
@@ -26,8 +28,6 @@ class ProfileEntryFragment : Fragment() {
     private val binding get() = _binding!!
 
     var deviceImageUri: Uri? = null
-
-    var firebaseImageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +52,8 @@ class ProfileEntryFragment : Fragment() {
 
     private fun configureFinishButtonListener() {
         binding.btnFinish.setOnClickListener {
-            saveUserToFirebase()
+            Log.d(LOG_TAG, "configureFinishButtonListener: button clicked")
+            saveProfileImageToFirebase()
         }
     }
 
@@ -69,7 +70,8 @@ class ProfileEntryFragment : Fragment() {
             deviceImageUri = data.data
 
             // using deprecated methods to support older devices (running API 21) like my own.
-            val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, deviceImageUri)
+            val bitmap =
+                MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, deviceImageUri)
 
             // hide button
             binding.btnProfilePic.alpha = 0f
@@ -79,42 +81,47 @@ class ProfileEntryFragment : Fragment() {
         }
     }
 
-    private fun saveUserToFirebase() {
-        deviceImageUri?.let { deviceImageLocation ->
-            // generate random unique string for filename
+    private fun saveProfileImageToFirebase() {
+
+        // TODO rooms will be empty when user signs up (or signs back in)?
+
+        // if an image was not selected, just save user info. Otherwise, save user info AND image location
+        if (deviceImageUri == null) {
+            saveUserToFirebase(
+                User(binding.etName.text.toString(), FirebaseAuth.getInstance().currentUser?.phoneNumber!!)
+            )
+        } else {
+            // generate random unique string for image filename
             val filename = UUID.randomUUID().toString()
 
             // get reference to images location in firebase storage
-            val storageReference = FirebaseStorage.getInstance().getReference("/images/$filename")
+            val imagesStorageRef = FirebaseStorage.getInstance().getReference("/images/$filename")
 
-            storageReference.putFile(deviceImageLocation).addOnSuccessListener {
-                storageReference.downloadUrl.addOnSuccessListener { firebaseImageLocation ->
-                    Log.d(LOG_TAG, "saveProfileImageToFirebaseStorage: image saved to firebase and image URI is $firebaseImageLocation")
-                    // retrieve location of image stored in firebase
-                    firebaseImageUri = firebaseImageLocation
-
-                    Log.d(LOG_TAG, "saveUserToFirebaseDatabase: current user detail - ${FirebaseAuth.getInstance().currentUser?.phoneNumber}")
-
-                    val uid = FirebaseAuth.getInstance().uid
-                    val databaseReference = FirebaseDatabase.getInstance().getReference("/users/$uid")
-
-                    val user = User(
-                        binding.etName.text.toString(),
-                        FirebaseAuth.getInstance().currentUser?.phoneNumber!!,
-                        firebaseImageUri.toString(),
-                        arrayListOf() // TODO threads will be empty when user signs up (or signs back in)?
+            imagesStorageRef.putFile(deviceImageUri!!).addOnSuccessListener {
+                imagesStorageRef.downloadUrl.addOnSuccessListener { firebaseImageUri ->
+                    saveUserToFirebase(
+                        User(binding.etName.text.toString(), FirebaseAuth.getInstance().currentUser?.phoneNumber!!, firebaseImageUri.toString())
                     )
-                    Log.d(LOG_TAG, "saveUserToFirebaseDatabase: user built with image URI: ${firebaseImageUri.toString()}")
-
-                    // launch main activity if sign up is successful
-                    databaseReference.setValue(user).addOnSuccessListener {
-                        // user created in firebase
-                        startMainActivity()
-                    }
                 }
             }
         }
     }
+
+    private fun saveUserToFirebase(user: User) {
+        val uid = FirebaseAuth.getInstance().uid!!
+
+        // save user to firebase
+        Firebase.firestore.collection("users").document(uid).set(user)
+            .addOnSuccessListener { 
+                // user created in firebase
+                startMainActivity()
+            }
+            .addOnFailureListener { e ->
+                Log.d(LOG_TAG, "Error adding document $e")
+            }
+
+    }
+
 
     private fun startMainActivity() {
         // Prepare and launch MainActivity

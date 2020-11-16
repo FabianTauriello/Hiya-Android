@@ -30,10 +30,18 @@
         <argument
             android:name="roomId"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
         <argument
-            android:name="title"
-            app:argType="string" />
+            android:name="privateRoomReceiver"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="groupRoomParticipants"
+            app:argType="string[]"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <dialog
         android:id="@+id/newMessageDialog"
@@ -42,5 +50,10 @@
         <action
             android:id="@+id/action_newMessageDialog_to_chatLogFragment"
             app:destination="@id/chatLogFragment" />
+        <argument android:name="contacts"
+            app:argType="io.github.fabiantauriello.hiya.domain.Contact[]" />
+        <argument
+            android:name="contactsPermissionGranted"
+            app:argType="boolean" />
     </dialog>
 </navigation>
