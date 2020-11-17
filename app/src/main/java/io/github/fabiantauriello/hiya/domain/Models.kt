@@ -1,7 +1,12 @@
 package io.github.fabiantauriello.hiya.domain
 
+import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.firestore.Exclude
+import kotlinx.android.parcel.IgnoredOnParcel
+import kotlinx.android.parcel.Parceler
 import kotlinx.android.parcel.Parcelize
+import java.io.Serializable
 
 data class User(
     val name: String,
@@ -22,29 +27,10 @@ data class Message(
     val sender: String
 )
 
-sealed class ChatRoom(
+@Parcelize
+data class ChatRoom(
+    val id: String?,
     val participants: ArrayList<String>,
     val lastMessage: String?,
     val lastMessageTimestamp: String?
-)
-
-class PrivateChatRoom(
-    participants: ArrayList<String>,
-    lastMessage: String?,
-    lastMessageTimestamp: String?
-) : ChatRoom(participants, lastMessage, lastMessageTimestamp)
-
-//class GroupChatRoom(
-//    val name: String,
-//    val photoUri: String,
-//    participants: ArrayList<String>,
-//    lastMessage: String?,
-//    lastMessageTimestamp: String?
-//) : ChatRoom(participants, lastMessage, lastMessageTimestamp)
-
-// TODO for rooms rv only
-data class ChatRoomItem(
-    val id: String,
-    val lastMessage: String,
-    val lastMessageTimestamp: String
-)
+) : Parcelable

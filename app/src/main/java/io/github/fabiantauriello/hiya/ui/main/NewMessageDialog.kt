@@ -1,6 +1,7 @@
 package io.github.fabiantauriello.hiya.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +14,7 @@ import io.github.fabiantauriello.hiya.domain.Contact
 
 class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
 
-    private val LOG_TAG = this::class.java.name
-
-    private val CONTACTS_PERMISSION_REQUEST_CODE = 1
+    private val TAG = this::class.java.name
 
     private var _binding: FragmentNewMessageDialogBinding? = null
     private val binding get() = _binding!!
@@ -29,6 +28,8 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        Log.d(TAG, "onCreateView: called")
 
         _binding = FragmentNewMessageDialogBinding.inflate(inflater, container, false)
 
@@ -59,8 +60,20 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
 
     override fun onContactClick(contact: Contact) {
         // TODO get actual room id pass in empty string if no private chat exists with desired contact
-        val roomId = null
-        val action = NewMessageDialogDirections.actionNewMessageDialogToChatLogFragment(null, contact.id, null)
+
+        // check if any of the user's chat rooms contain the contact clicked on as a participant
+        // if so, send that room id so that specific chat is opened instead of creating a new one
+        val roomsContainingContact = args.chatRooms.filter {
+            it.participants.contains(contact.id)
+        }
+        val roomId = if (roomsContainingContact.isEmpty()) {
+            null
+        } else {
+            // only 1 room should be returned so we can use 0 as index // TODO will only work for private chats
+            roomsContainingContact[0].id
+        }
+
+        val action = NewMessageDialogDirections.actionNewMessageDialogToChatLogFragment(roomId, contact.id)
         findNavController().navigate(action)
     }
 

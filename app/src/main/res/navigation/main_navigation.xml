@@ -37,11 +37,6 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
-        <argument
-            android:name="groupRoomParticipants"
-            app:argType="string[]"
-            app:nullable="true"
-            android:defaultValue="@null" />
     </fragment>
     <dialog
         android:id="@+id/newMessageDialog"
@@ -55,5 +50,8 @@
         <argument
             android:name="contactsPermissionGranted"
             app:argType="boolean" />
+        <argument
+            android:name="chatRooms"
+            app:argType="io.github.fabiantauriello.hiya.domain.ChatRoom[]" />
     </dialog>
 </navigation>

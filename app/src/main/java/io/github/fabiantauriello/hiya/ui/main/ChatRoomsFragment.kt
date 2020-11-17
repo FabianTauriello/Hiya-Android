@@ -13,14 +13,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.ChatRoomItem
+import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.databinding.FragmentChatRoomsBinding
 import io.github.fabiantauriello.hiya.domain.Contact
 
 // chat threads
 class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
 
-    private val LOG_TAG = this::class.java.name
+    private val TAG = this::class.java.name
 
     private val CONTACTS_PERMISSION_REQUEST_CODE = 1
 
@@ -37,6 +37,8 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        Log.d(TAG, "onCreateView: contacts size = ${contacts.size}")
 
         _binding = FragmentChatRoomsBinding.inflate(inflater, container, false)
 
@@ -131,9 +133,10 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
                 // get all user documents and check if its phone number is matches a phone number on the device
                 // If so, then add it to the contacts list stored in this app
                 Firebase.firestore.collection("users").get()
-                    .addOnSuccessListener { users ->
-                        if (!users.isEmpty) {
-                            for (user in users.documents) {
+                    .addOnSuccessListener { snapshot ->
+                        if (!snapshot.isEmpty) {
+                            Log.d(TAG, "getContacts: called")
+                            for (user in snapshot.documents) {
                                 val userPhoneNumber = user.get("phoneNumber") as String
                                 val index = deviceContactPhoneNumberList.indexOf(userPhoneNumber)
                                 if (index != -1) {
@@ -175,16 +178,17 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
             .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
             if (e != null) {
-                Log.w(LOG_TAG, "Listen failed.", e)
+                Log.w(TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
 
-            val newRooms = arrayListOf<ChatRoomItem>()
+            val newRooms = arrayListOf<ChatRoom>()
             for (doc in snapshot?.documents!!) {
                 val id = doc.id
+                val participants = doc.get("participants") as ArrayList<String>
                 val lastMessage = doc.get("lastMessage").toString()
                 val lastMessageTimestamp = doc.get("lastMessageTimestamp").toString()
-                newRooms.add(ChatRoomItem(id, lastMessage, lastMessageTimestamp))
+                newRooms.add(ChatRoom(id, participants, lastMessage, lastMessageTimestamp))
             }
             adapter.replaceAllRooms(newRooms)
         }
@@ -194,15 +198,18 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
         binding.fabNewMessage.setOnClickListener {
             val action = ChatRoomsFragmentDirections.actionChatRoomsFragmentToNewMessageDialog(
                 contacts.toTypedArray(),
-                contactsPermissionGranted
+                contactsPermissionGranted,
+                (binding.rvChatRooms.adapter as ChatRoomsAdapter).getRooms().toTypedArray()
             )
             findNavController().navigate(action)
         }
     }
 
-    override fun onChatRoomClick(chatRoom: ChatRoomItem) {
+    override fun onChatRoomClick(chatRoom: ChatRoom) {
         val action = ChatRoomsFragmentDirections.actionChatRoomsFragmentToChatLogFragment(chatRoom.id)
         findNavController().navigate(action)
     }
 
 }
+
+// TODO detach listeners

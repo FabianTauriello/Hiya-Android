@@ -6,11 +6,6 @@
         android:icon="@drawable/ic_chats"
         android:title="@string/bottom_nav_chats"/>
     <item
-        android:id="@+id/camera"
-        android:enabled="true"
-        android:icon="@drawable/ic_camera"
-        android:title="@string/bottom_nav_camera"/>
-    <item
         android:id="@+id/settingsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_settings"

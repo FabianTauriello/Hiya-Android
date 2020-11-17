@@ -11,8 +11,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentChatLogBinding
+import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.domain.Message
-import io.github.fabiantauriello.hiya.domain.PrivateChatRoom
 
 // individual chat between users
 class ChatLogFragment : Fragment() {
@@ -58,12 +58,13 @@ class ChatLogFragment : Fragment() {
             initializeChatLogListener()
         } else {
             // new room will need to be created - TODO PRIVATE ONLY SO FAR
-            val newRoom =
-                PrivateChatRoom(arrayListOf(Hiya.userId, args.privateRoomReceiver!!), null, null)
 
-            Firebase.firestore.collection("rooms").add(newRoom)
+            val ref = Firebase.firestore.collection("rooms").document()
+            val newRoomId = ref.id
+            val newParticipants = arrayListOf(Hiya.userId, args.privateRoomReceiver!!)
+            ref.set(ChatRoom(newRoomId, newParticipants, null, null))
                 .addOnSuccessListener {
-                    roomId = it.id
+                    roomId = newRoomId
                     binding.btnSendNewMessage.isEnabled = true
 
                     initializeChatLogListener()
@@ -71,6 +72,7 @@ class ChatLogFragment : Fragment() {
                 .addOnFailureListener {
 
                 }
+
         }
     }
 
@@ -102,26 +104,28 @@ class ChatLogFragment : Fragment() {
             val text = binding.etNewMessage.text.toString()
             val timestamp = System.currentTimeMillis().toString()
 
-            // get references for batch write
-            val roomRef = Firebase.firestore.collection("rooms").document(roomId!!)
-            val newMessageRef =
-                Firebase.firestore.collection("rooms").document(roomId!!).collection("messages")
-                    .document()
+            if(text.trim().isNotEmpty()) {
+                // get references for batch write
+                val roomRef = Firebase.firestore.collection("rooms").document(roomId!!)
+                val newMessageRef =
+                    Firebase.firestore.collection("rooms").document(roomId!!).collection("messages")
+                        .document()
 
-            // write new message to messages collection in room document and update room properties: lastMessage and lastMessageTimestamp
-            Firebase.firestore.runBatch { batch ->
-                batch.update(
-                    roomRef,
-                    mapOf("lastMessage" to text, "lastMessageTimestamp" to timestamp)
-                )
-                batch.set(newMessageRef, Message(text, timestamp, Hiya.userId))
+                // write new message to messages collection in room document and update room properties: lastMessage and lastMessageTimestamp
+                Firebase.firestore.runBatch { batch ->
+                    batch.update(
+                        roomRef,
+                        mapOf("lastMessage" to text, "lastMessageTimestamp" to timestamp)
+                    )
+                    batch.set(newMessageRef, Message(text, timestamp, Hiya.userId))
+                }
+                    .addOnSuccessListener {
+                        binding.etNewMessage.text.clear()
+                    }
+                    .addOnFailureListener {
+                        // TODO message failed
+                    }
             }
-                .addOnSuccessListener {
-                    binding.etNewMessage.text.clear()
-                }
-                .addOnFailureListener {
-                    // TODO message failed
-                }
 
         }
     }
