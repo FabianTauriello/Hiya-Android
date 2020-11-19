@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -13,6 +15,8 @@ import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentChatLogBinding
 import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.domain.Message
+import io.github.fabiantauriello.hiya.domain.Participant
+import io.github.fabiantauriello.hiya.domain.User
 
 // individual chat between users
 class ChatLogFragment : Fragment() {
@@ -59,10 +63,13 @@ class ChatLogFragment : Fragment() {
         } else {
             // new room will need to be created - TODO PRIVATE ONLY SO FAR
 
-            val ref = Firebase.firestore.collection("rooms").document()
-            val newRoomId = ref.id
-            val newParticipants = arrayListOf(Hiya.userId, args.privateRoomReceiver!!)
-            ref.set(ChatRoom(newRoomId, newParticipants, null, null))
+            val roomsRef = Firebase.firestore.collection("rooms").document()
+            val newRoomId = roomsRef.id
+            val newParticipants = arrayListOf(
+                Participant(Hiya.userId, Hiya.username),
+                Participant(args.privateRoomReceiver!!.userId, args.privateRoomReceiver!!.name)
+            )
+            roomsRef.set(ChatRoom(newRoomId, newParticipants, null, null))
                 .addOnSuccessListener {
                     roomId = newRoomId
                     binding.btnSendNewMessage.isEnabled = true
@@ -92,7 +99,13 @@ class ChatLogFragment : Fragment() {
                         val timestamp = message.document.get("timestamp").toString()
                         val sender = message.document.get("sender").toString()
                         // update chat log adapter with the latest message
-                        (binding.rvChatLog.adapter as ChatLogAdapter).addNewMessage(Message(text, timestamp, sender))
+                        (binding.rvChatLog.adapter as ChatLogAdapter).addNewMessage(
+                            Message(
+                                text,
+                                timestamp,
+                                sender
+                            )
+                        )
                     }
                 }
 
@@ -104,7 +117,7 @@ class ChatLogFragment : Fragment() {
             val text = binding.etNewMessage.text.toString()
             val timestamp = System.currentTimeMillis().toString()
 
-            if(text.trim().isNotEmpty()) {
+            if (text.trim().isNotEmpty()) {
                 // get references for batch write
                 val roomRef = Firebase.firestore.collection("rooms").document(roomId!!)
                 val newMessageRef =

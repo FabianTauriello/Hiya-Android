@@ -1,7 +1,9 @@
 package io.github.fabiantauriello.hiya.ui.registration
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -19,6 +21,7 @@ import io.github.fabiantauriello.hiya.databinding.FragmentProfileEntryBinding
 import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.ui.main.MainActivity
 import java.util.*
+
 
 class ProfileEntryFragment : Fragment() {
 
@@ -88,7 +91,8 @@ class ProfileEntryFragment : Fragment() {
         // if an image was not selected, just save user info. Otherwise, save user info AND image location
         if (deviceImageUri == null) {
             saveUserToFirebase(
-                User(binding.etName.text.toString(), FirebaseAuth.getInstance().currentUser?.phoneNumber!!)
+                binding.etName.text.toString(),
+                FirebaseAuth.getInstance().currentUser?.phoneNumber!!
             )
         } else {
             // generate random unique string for image filename
@@ -100,24 +104,33 @@ class ProfileEntryFragment : Fragment() {
             imagesStorageRef.putFile(deviceImageUri!!).addOnSuccessListener {
                 imagesStorageRef.downloadUrl.addOnSuccessListener { firebaseImageUri ->
                     saveUserToFirebase(
-                        User(binding.etName.text.toString(), FirebaseAuth.getInstance().currentUser?.phoneNumber!!, firebaseImageUri.toString())
+                        binding.etName.text.toString(),
+                        FirebaseAuth.getInstance().currentUser?.phoneNumber!!,
+                        firebaseImageUri.toString()
                     )
                 }
             }
         }
     }
 
-    private fun saveUserToFirebase(user: User) {
-        val uid = FirebaseAuth.getInstance().uid!!
+    private fun saveUserToFirebase(
+        userName: String,
+        userPhoneNumber: String,
+        userProfileImageUri: String? = null
+    ) {
 
         // save user to firebase
-        Firebase.firestore.collection("users").document(uid).set(user)
-            .addOnSuccessListener { 
+        val usersRef = Firebase.firestore.collection("users").document()
+        usersRef.set(User(usersRef.id, userName, userPhoneNumber, userProfileImageUri))
+            .addOnSuccessListener {
+                // save important data for later openings of Hiya (that skip registration)
+                saveProfileDataToSharedPrefs(usersRef.id, userName)
+
                 // user created in firebase
                 startMainActivity()
             }
             .addOnFailureListener { e ->
-                Log.d(LOG_TAG, "Error adding document $e")
+                Log.d(LOG_TAG, "Error creating user $e")
             }
 
     }
@@ -130,6 +143,15 @@ class ProfileEntryFragment : Fragment() {
 
         // Destroy SignInActivity
         requireActivity().finish()
+    }
+
+    private fun saveProfileDataToSharedPrefs(userId: String, username: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString(Hiya.SHARED_PREFS_USER_ID, userId)
+        editor.putString(Hiya.SHARED_PREFS_USERNAME, username)
+        editor.apply()
     }
 
 }

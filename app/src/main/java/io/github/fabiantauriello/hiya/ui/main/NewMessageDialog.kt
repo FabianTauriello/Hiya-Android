@@ -9,7 +9,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.github.fabiantauriello.hiya.databinding.FragmentNewMessageDialogBinding
-import io.github.fabiantauriello.hiya.domain.Contact
+import io.github.fabiantauriello.hiya.domain.Participant
+import io.github.fabiantauriello.hiya.domain.User
 
 
 class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
@@ -21,7 +22,7 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
 
     private val args: NewMessageDialogArgs by navArgs()
 
-    private lateinit var contacts: Array<Contact>
+    private lateinit var contacts: Array<User>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,22 +59,33 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
         }
     }
 
-    override fun onContactClick(contact: Contact) {
-        // TODO get actual room id pass in empty string if no private chat exists with desired contact
+    override fun onContactClick(contact: User) {
 
         // check if any of the user's chat rooms contain the contact clicked on as a participant
         // if so, send that room id so that specific chat is opened instead of creating a new one
-        val roomsContainingContact = args.chatRooms.filter {
-            it.participants.contains(contact.id)
-        }
-        val roomId = if (roomsContainingContact.isEmpty()) {
-            null
-        } else {
-            // only 1 room should be returned so we can use 0 as index // TODO will only work for private chats
-            roomsContainingContact[0].id
+//        val roomsContainingContact = args.chatRooms.filter { room ->
+//            room.participants.contains(contact.id)
+//        }
+//        val roomId = if (roomsContainingContact.isEmpty()) {
+//            null
+//        } else {
+//            // only 1 room should be returned so we can use 0 as index // TODO will only work for private chats
+//            roomsContainingContact[0].id
+//        }
+        // TODO UGLY. change it maybe with filter
+        var roomId: String? = null
+        for (room in args.chatRooms) {
+            for (participant in room.participants) {
+                if (participant.userId == contact.id) {
+                    roomId = room.id
+                }
+            }
         }
 
-        val action = NewMessageDialogDirections.actionNewMessageDialogToChatLogFragment(roomId, contact.id)
+        val action = NewMessageDialogDirections.actionNewMessageDialogToChatLogFragment(
+            roomId,
+            Participant(contact.id, contact.name)
+        )
         findNavController().navigate(action)
     }
 

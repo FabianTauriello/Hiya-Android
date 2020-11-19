@@ -8,7 +8,6 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ChatRoomItemBinding
 import io.github.fabiantauriello.hiya.domain.ChatRoom
-import kotlin.collections.ArrayList
 
 class ChatRoomsAdapter(
     private val chatRooms: ArrayList<ChatRoom>,
@@ -30,7 +29,8 @@ class ChatRoomsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatRoomItemViewHolder, position: Int) {
-        holder.binding.tvChatRoomTitle.text = chatRooms[position].participants.filter { it != Hiya.userId }[0]
+        holder.binding.tvChatRoomTitle.text =
+            chatRooms[position].participants.filter { it.userId != Hiya.userId }[0].name
         holder.binding.tvChatLastMessage.text = chatRooms[position].lastMessage
         holder.binding.tvLastMessageTimestamp.text = chatRooms[position].lastMessageTimestamp
 
@@ -42,7 +42,7 @@ class ChatRoomsAdapter(
 
     override fun getItemCount() = chatRooms.size
 
-    fun replaceAllRooms(newChatRooms: ArrayList<ChatRoom>) {
+    fun update(newChatRooms: ArrayList<ChatRoom>) {
         chatRooms.clear()
         chatRooms.addAll(newChatRooms)
     }

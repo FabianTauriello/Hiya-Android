@@ -8,10 +8,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.ContactItemBinding
-import io.github.fabiantauriello.hiya.domain.Contact
+import io.github.fabiantauriello.hiya.domain.User
 
 class ContactsAdapter(
-    private val contactList: Array<Contact>,
+    private val contactList: Array<User>,
     private val listener: ContactClickListener
 ) : RecyclerView.Adapter<ContactsAdapter.ContactItemViewHolder>() {
 
@@ -34,12 +34,6 @@ class ContactsAdapter(
     override fun getItemCount() = contactList.size
 
     override fun onBindViewHolder(holder: ContactItemViewHolder, position: Int) {
-//        cursor.moveToPosition(position)
-
-//        val name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-//        val number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-
-
         // set image
         val options: RequestOptions = RequestOptions()
 //            .override(450, 600)

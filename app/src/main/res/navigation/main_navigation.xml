@@ -34,9 +34,9 @@
             android:defaultValue="@null" />
         <argument
             android:name="privateRoomReceiver"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            android:defaultValue="@null"
+            app:argType="io.github.fabiantauriello.hiya.domain.Participant"
+            app:nullable="true" />
     </fragment>
     <dialog
         android:id="@+id/newMessageDialog"
@@ -46,7 +46,7 @@
             android:id="@+id/action_newMessageDialog_to_chatLogFragment"
             app:destination="@id/chatLogFragment" />
         <argument android:name="contacts"
-            app:argType="io.github.fabiantauriello.hiya.domain.Contact[]" />
+            app:argType="io.github.fabiantauriello.hiya.domain.User[]" />
         <argument
             android:name="contactsPermissionGranted"
             app:argType="boolean" />

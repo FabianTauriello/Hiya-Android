@@ -11,7 +11,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.ui.main.MainActivity
 
 class RegistrationActivity : AppCompatActivity() {

@@ -2,23 +2,31 @@ package io.github.fabiantauriello.hiya.domain
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.firebase.firestore.Exclude
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parceler
 import kotlinx.android.parcel.Parcelize
-import java.io.Serializable
 
+@Parcelize
 data class User(
+    val id: String,
+    // When writing name to firebase, 'name' represents the value entered in
+    // profile creation. In all other instances, this property represents the name
+    // saved for this contact on the user's phone
     val name: String,
     val phoneNumber: String,
     val profileImageUri: String? = null
-)
+) : Parcelable
 
 @Parcelize
-data class Contact(
-    val id: String,
-    val name: String,
-    val profileImageUri: String?
+data class ChatRoom(
+    val id: String?,
+    val participants: ArrayList<Participant>,
+    val lastMessage: String?,
+    val lastMessageTimestamp: String?
+) : Parcelable
+
+@Parcelize
+data class Participant(
+    val userId: String,
+    var name: String
 ) : Parcelable
 
 data class Message(
@@ -26,11 +34,3 @@ data class Message(
     val timestamp: String,
     val sender: String
 )
-
-@Parcelize
-data class ChatRoom(
-    val id: String?,
-    val participants: ArrayList<String>,
-    val lastMessage: String?,
-    val lastMessageTimestamp: String?
-) : Parcelable

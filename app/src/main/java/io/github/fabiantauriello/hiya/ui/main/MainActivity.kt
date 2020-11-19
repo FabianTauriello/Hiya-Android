@@ -13,14 +13,16 @@ import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private val LOG_TAG = this::class.java.name
+    private val TAG = this::class.java.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(LOG_TAG, "onCreate() called")
+        Log.d(TAG, "onCreate() called")
         super.onCreate(savedInstanceState)
 
-        // set global variable user id for easy access to user node in Firestore
-        Hiya.userId = FirebaseAuth.getInstance().uid!!
+        // set global variables user id and username for easy access to user node in Firestore
+        val sharedPreferences = getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
+        Hiya.userId = sharedPreferences.getString(Hiya.SHARED_PREFS_USER_ID, "") ?: ""
+        Hiya.username = sharedPreferences.getString(Hiya.SHARED_PREFS_USERNAME, "") ?: ""
 
         // initialize binding
         val binding =
