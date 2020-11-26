@@ -16,16 +16,14 @@ class SettingsFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
 
-    private var _binding: FragmentSettingsBinding? = null
-    // This property is only valid between onCreateView and onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         firebaseAuth = Firebase.auth
 

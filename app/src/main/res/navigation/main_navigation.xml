@@ -34,9 +34,9 @@
             android:defaultValue="@null" />
         <argument
             android:name="privateRoomReceiver"
-            android:defaultValue="@null"
             app:argType="io.github.fabiantauriello.hiya.domain.Participant"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <dialog
         android:id="@+id/newMessageDialog"

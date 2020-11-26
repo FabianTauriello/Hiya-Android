@@ -8,10 +8,11 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ChatRoomItemBinding
 import io.github.fabiantauriello.hiya.domain.ChatRoom
+import io.github.fabiantauriello.hiya.viewmodels.ChatRoomsViewModel
 
 class ChatRoomsAdapter(
     private val chatRooms: ArrayList<ChatRoom>,
-    private val listener: ChatRoomClickListener
+    private val viewModel: ChatRoomsViewModel
 ) : RecyclerView.Adapter<ChatRoomsAdapter.ChatRoomItemViewHolder>() {
 
     class ChatRoomItemViewHolder(
@@ -29,15 +30,15 @@ class ChatRoomsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatRoomItemViewHolder, position: Int) {
+        // bind data to display
         holder.binding.tvChatRoomTitle.text =
             chatRooms[position].participants.filter { it.userId != Hiya.userId }[0].name
         holder.binding.tvChatLastMessage.text = chatRooms[position].lastMessage
         holder.binding.tvLastMessageTimestamp.text = chatRooms[position].lastMessageTimestamp
 
-        // set click listener
-        holder.binding.layoutChatRoomItem.setOnClickListener {
-            listener.onChatRoomClick(chatRooms[position])
-        }
+        // set data binding variables
+        holder.binding.viewModel = viewModel
+        holder.binding.room = chatRooms[position]
     }
 
     override fun getItemCount() = chatRooms.size

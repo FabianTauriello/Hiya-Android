@@ -34,3 +34,9 @@ data class Message(
     val timestamp: String,
     val sender: String
 )
+
+enum class FirestoreQueryStatus {
+    SUCCESS,
+    FAILURE,
+    LOADING
+}

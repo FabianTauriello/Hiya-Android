@@ -8,22 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentChatRoomsBinding
-import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.viewmodels.ChatRoomsViewModel
 
 // chat threads
-class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
+class ChatRoomsFragment : Fragment() {
 
     private val TAG = this::class.java.name
 
-    private var _binding: FragmentChatRoomsBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentChatRoomsBinding
 
     private val viewModel: ChatRoomsViewModel by viewModels()
 
@@ -38,7 +37,7 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentChatRoomsBinding.inflate(inflater, container, false)
+        binding = FragmentChatRoomsBinding.inflate(inflater, container, false)
 
         requestContactsPermission()
 
@@ -48,6 +47,12 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
 
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    private fun configureChatRoomsRecyclerView() {
+        // setup and connect adapter
+        adapter = ChatRoomsAdapter(arrayListOf(), viewModel)
+        binding.rvChatRooms.adapter = adapter
     }
 
     private fun requestContactsPermission() {
@@ -98,12 +103,6 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
         })
     }
 
-    private fun configureChatRoomsRecyclerView() {
-        // setup and connect adapter
-        adapter = ChatRoomsAdapter(arrayListOf(), this)
-        binding.rvChatRooms.adapter = adapter
-    }
-
     private fun removeProgressBar() { // TODO need to check how this is called
         binding.pbLoadContacts.visibility = View.GONE
         binding.fabNewMessage.visibility = View.VISIBLE
@@ -119,12 +118,6 @@ class ChatRoomsFragment : Fragment(), ChatRoomClickListener {
             )
             findNavController().navigate(action)
         }
-    }
-
-    override fun onChatRoomClick(chatRoom: ChatRoom) {
-        val action =
-            ChatRoomsFragmentDirections.actionChatRoomsFragmentToChatLogFragment(chatRoom.id)
-        findNavController().navigate(action)
     }
 
 }

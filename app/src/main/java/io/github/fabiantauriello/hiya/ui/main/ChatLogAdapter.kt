@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ChatLogItemBinding
+import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.domain.Message
 
 class ChatLogAdapter(
@@ -45,9 +46,11 @@ class ChatLogAdapter(
 
     override fun getItemCount() = messages.size
 
-    fun addNewMessage(message: Message) {
-        messages.add(message)
+    fun update(newMessages: ArrayList<Message>) {
+        messages.addAll(newMessages)
         notifyDataSetChanged()
     }
+
+
 
 }

@@ -2,22 +2,27 @@ package io.github.fabiantauriello.hiya.repository
 
 import android.provider.ContactsContract
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.ChatRoom
-import io.github.fabiantauriello.hiya.domain.Participant
-import io.github.fabiantauriello.hiya.domain.User
-import io.github.fabiantauriello.hiya.ui.main.ChatRoomsAdapter
+import io.github.fabiantauriello.hiya.domain.*
 
-class Repository {
+// singleton
+object Repository {
 
     private val TAG = this::class.java.name
 
+    // for ChatRoomsViewModel
     var contacts: MutableLiveData<ArrayList<User>> = MutableLiveData()
     var rooms: MutableLiveData<ArrayList<ChatRoom>> = MutableLiveData()
+
+    // for ChatLogViewModel
+    var messages: MutableLiveData<ArrayList<Message>> = MutableLiveData()
+
+    var newMessageStatus: MutableLiveData<FirestoreQueryStatus> = MutableLiveData(FirestoreQueryStatus.LOADING)
 
     // TODO detach listeners
 
@@ -72,7 +77,13 @@ class Repository {
                                 val index = deviceContactPhoneNumberList.indexOf(userPhoneNumber)
                                 if (index != -1) {
                                     // contact has Hiya
-                                    matchingContacts.add(User(user.id, deviceContactNameList[index], userPhoneNumber))
+                                    matchingContacts.add(
+                                        User(
+                                            user.id,
+                                            deviceContactNameList[index],
+                                            userPhoneNumber
+                                        )
+                                    )
                                 }
                             }
                             contacts.postValue(matchingContacts)
@@ -92,7 +103,8 @@ class Repository {
         * provide creates a document snapshot immediately with the current contents of the single document.
         * Then, each time the contents change, another call updates the document snapshot.
         */
-        Firebase.firestore.collection("rooms").whereArrayContains("participants", Participant(Hiya.userId, Hiya.username))
+        Firebase.firestore.collection("rooms")
+            .whereArrayContains("participants", Participant(Hiya.userId, Hiya.username))
             .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
@@ -114,5 +126,73 @@ class Repository {
                 }
                 rooms.postValue(newRooms)
             }
+    }
+
+    fun getMessages(roomId: String) {
+        Firebase.firestore.collection("rooms").document(roomId).collection("messages")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+
+                val documentChanges = snapshot?.documentChanges
+                val newMessages = arrayListOf<Message>()
+                if (documentChanges != null) {
+                    for (message in documentChanges) {
+                        val text = message.document.get("text").toString()
+                        val timestamp = message.document.get("timestamp").toString()
+                        val sender = message.document.get("sender").toString()
+                        // update chat log adapter with the latest message
+                        newMessages.add(Message(text, timestamp, sender))
+                    }
+                    messages.value = newMessages
+                }
+
+            }
+    }
+
+    fun setUpNewRoom(privateParticipant: Participant) {
+        val roomsRef = Firebase.firestore.collection("rooms").document()
+        val newRoomId = roomsRef.id
+        val newParticipants = arrayListOf(
+            Participant(Hiya.userId, Hiya.username),
+            Participant(privateParticipant.userId, privateParticipant.name)
+        )
+        roomsRef.set(ChatRoom(newRoomId, newParticipants, null, null))
+            .addOnSuccessListener {
+                // roomId = newRoomId
+                // initializeChatLogListener() // getMessages
+                getMessages(newRoomId)
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
+    fun addNewMessage(text: String, roomId: String) {
+        newMessageStatus.value = FirestoreQueryStatus.LOADING
+
+        val timestamp = System.currentTimeMillis().toString()
+
+        // get references for batch write
+        val roomRef = Firebase.firestore.collection("rooms").document(roomId)
+        val newMessageRef =
+            Firebase.firestore.collection("rooms").document(roomId).collection("messages")
+                .document()
+
+        // write new message to messages collection in room document and update room properties: lastMessage and lastMessageTimestamp
+        Firebase.firestore.runBatch { batch ->
+            batch.update(roomRef, mapOf("lastMessage" to text, "lastMessageTimestamp" to timestamp))
+            batch.set(newMessageRef, Message(text, timestamp, Hiya.userId))
+        }
+            .addOnSuccessListener {
+                newMessageStatus.value = FirestoreQueryStatus.SUCCESS
+            }
+            .addOnFailureListener {
+                // TODO message failed
+                newMessageStatus.value = FirestoreQueryStatus.FAILURE
+            }
+
     }
 }

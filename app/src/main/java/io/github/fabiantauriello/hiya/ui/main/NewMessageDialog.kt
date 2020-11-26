@@ -17,8 +17,7 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
 
     private val TAG = this::class.java.name
 
-    private var _binding: FragmentNewMessageDialogBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentNewMessageDialogBinding
 
     private val args: NewMessageDialogArgs by navArgs()
 
@@ -32,7 +31,7 @@ class NewMessageDialog : BottomSheetDialogFragment(), ContactClickListener {
 
         Log.d(TAG, "onCreateView: called")
 
-        _binding = FragmentNewMessageDialogBinding.inflate(inflater, container, false)
+        binding = FragmentNewMessageDialogBinding.inflate(inflater, container, false)
 
         contacts = args.contacts
 
