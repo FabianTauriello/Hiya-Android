@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ChatLogItemBinding
-import io.github.fabiantauriello.hiya.domain.ChatRoom
 import io.github.fabiantauriello.hiya.domain.Message
+import io.github.fabiantauriello.hiya.util.Utils
 
 class ChatLogAdapter(
     private val messages: ArrayList<Message>
@@ -20,7 +20,7 @@ class ChatLogAdapter(
     ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatLogItemViewHolder {
-        val binding = DataBindingUtil.inflate<ChatLogItemBinding>(
+        val binding = DataBindingUtil.inflate<io.github.fabiantauriello.hiya.databinding.ChatLogItemBinding>(
             LayoutInflater.from(parent.context),
             R.layout.chat_log_item,
             parent,
@@ -46,8 +46,8 @@ class ChatLogAdapter(
 
     override fun getItemCount() = messages.size
 
-    fun update(newMessages: ArrayList<Message>) {
-        messages.addAll(newMessages)
+    fun update(newMessage: Message) {
+        messages.add(newMessage)
         notifyDataSetChanged()
     }
 

@@ -37,6 +37,5 @@ data class Message(
 
 enum class FirestoreQueryStatus {
     SUCCESS,
-    FAILURE,
-    LOADING
+    FAILURE
 }

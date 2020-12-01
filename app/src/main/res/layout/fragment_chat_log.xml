@@ -7,16 +7,28 @@
     tools:context=".ui.main.ChatLogFragment">
 
 
+    <ProgressBar
+        android:id="@+id/pbLoadRoom"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChatLog"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:stackFromEnd="true"
         app:layout_constraintBottom_toTopOf="@+id/etNewMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:stackFromEnd="true"
         tools:listitem="@layout/chat_log_item">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -27,6 +39,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnSendNewMessage"
         app:layout_constraintStart_toStartOf="parent" />
@@ -37,6 +50,7 @@
         android:layout_height="0dp"
         android:background="@drawable/ic_send_btn"
         android:enabled="true"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/etNewMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/etNewMessage" />

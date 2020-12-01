@@ -1,6 +1,7 @@
 package io.github.fabiantauriello.hiya.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +21,6 @@ class ChatLogFragment : Fragment() {
 
     private val args: ChatLogFragmentArgs by navArgs()
 
-    private var roomId: String? = null
-
     private lateinit var binding: FragmentChatLogBinding
 
     // need to specify view model factory because I need to pass in room Id
@@ -32,28 +31,16 @@ class ChatLogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        roomId = args.roomId
-
         binding = FragmentChatLogBinding.inflate(inflater, container, false)
 
-        if (roomId != null) {
-            viewModel = ViewModelProvider(this, ChatLogViewModelFactory(roomId!!)).get(ChatLogViewModel::class.java)
-            viewModel.getMessages()
-        } else {
-            // TODO
-            // cannot retrieve messages because roomId is null or create new room
-            viewModel = ViewModelProvider(this, ChatLogViewModelFactory(null, args.privateRoomReceiver)).get(ChatLogViewModel::class.java)
-            viewModel.setUpNewRoom()
-        }
+        viewModel = ViewModelProvider(this, ChatLogViewModelFactory(args.roomId, args.privateRoomReceiver)).get(ChatLogViewModel::class.java)
 
         configureChatLogRecyclerView()
-        configureNewMessageButtonListener()
         configureObservers()
+        configureNewMessageButtonListener()
 
-        // Inflate the layout for this fragment
         return binding.root
     }
-
 
     private fun configureChatLogRecyclerView() {
         // initialize recyclerview with empty adapter
@@ -62,14 +49,20 @@ class ChatLogFragment : Fragment() {
     }
 
     private fun configureObservers() {
-        viewModel.messages.observe(viewLifecycleOwner, Observer {
-            (binding.rvChatLog.adapter as ChatLogAdapter).update(it)
+        viewModel.messages.observe(viewLifecycleOwner, Observer { newMessages ->
+            newMessages.forEach { (binding.rvChatLog.adapter as ChatLogAdapter).update(it) }
+            binding.rvChatLog.scrollToPosition(newMessages.size - 1)
         })
         viewModel.newMessageStatus.observe(viewLifecycleOwner, Observer {
             when(it) {
                 FirestoreQueryStatus.SUCCESS -> binding.etNewMessage.text.clear()
                 FirestoreQueryStatus.FAILURE -> {} // TODO
-                FirestoreQueryStatus.LOADING -> {} // TODO
+            }
+        })
+        viewModel.createNewRoomStatus.observe(viewLifecycleOwner, Observer {
+            // remove progress bar if new room is successfully created or a new room isn't required
+            if (it == FirestoreQueryStatus.SUCCESS || args.roomId != null) {
+                removeProgressBar()
             }
         })
     }
@@ -78,9 +71,17 @@ class ChatLogFragment : Fragment() {
         binding.btnSendNewMessage.setOnClickListener {
             val text = binding.etNewMessage.text.toString()
             if (text.trim().isNotEmpty()) {
-                viewModel.addNewMessage(text, roomId!!)
+                viewModel.addNewMessage(text)
             }
         }
     }
+
+    private fun removeProgressBar() {
+        binding.pbLoadRoom.visibility = View.GONE
+        binding.rvChatLog.visibility = View.VISIBLE
+        binding.etNewMessage.visibility = View.VISIBLE
+        binding.btnSendNewMessage.visibility = View.VISIBLE
+    }
+
 
 }

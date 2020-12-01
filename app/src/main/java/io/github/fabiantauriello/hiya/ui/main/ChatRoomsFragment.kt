@@ -17,7 +17,7 @@ import io.github.fabiantauriello.hiya.databinding.FragmentChatRoomsBinding
 import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.viewmodels.ChatRoomsViewModel
 
-// chat threads
+// chat rooms
 class ChatRoomsFragment : Fragment() {
 
     private val TAG = this::class.java.name
@@ -45,7 +45,6 @@ class ChatRoomsFragment : Fragment() {
         configureChatRoomsLiveDataObserver()
         configureNewMessageButtonListener()
 
-        // Inflate the layout for this fragment
         return binding.root
     }
 
