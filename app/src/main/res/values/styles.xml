@@ -5,16 +5,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowAnimationStyle">@style/Replace</item>
-    </style>
-
-    <style name="Replace">
-        <item name="android:activityOpenEnterAnimation">@anim/replace_anim</item>
-        <item name="android:activityOpenExitAnimation">@anim/replace_anim</item>
-        <item name="android:activityCloseEnterAnimation">@anim/replace_anim</item>
-        <item name="android:activityCloseExitAnimation">@anim/replace_anim</item>
-        <item name="android:taskOpenEnterAnimation">@anim/replace_anim</item>
-        <item name="android:taskOpenExitAnimation">@anim/replace_anim</item>
     </style>
 
 </resources>

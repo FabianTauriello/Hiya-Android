@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.ChatRoomsFragment">
+    tools:context=".ui.main.inprogress.StoryListFragment">
 
     <ProgressBar
         android:id="@+id/pbLoadContacts"
@@ -13,13 +13,13 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/rvChatRooms"
+        app:layout_constraintBottom_toBottomOf="@+id/rvInProgressStories"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChatRooms"
+        android:id="@+id/rvInProgressStories"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

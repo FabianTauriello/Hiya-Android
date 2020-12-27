@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <data>
+        <import type="io.github.fabiantauriello.hiya.util.Utils" />
+        <variable
+            name="story"
+            type="io.github.fabiantauriello.hiya.domain.Story" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutChatRoomItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:chatRoomVisibility="@{story}">
+
+        <ImageView
+            android:id="@+id/ivStoryPicture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/tvStoryTitle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@{story.title}"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tvStoryShort"
+            app:layout_constraintEnd_toStartOf="@+id/tvLastUpdateTimestamp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/ivStoryPicture"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@sample/story_title" />
+
+        <TextView
+            android:id="@+id/tvStoryShort"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@{story.text}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvWordCount"
+            app:layout_constraintStart_toEndOf="@+id/ivStoryPicture"
+            app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle"
+            tools:text="@sample/story_long" />
+
+        <TextView
+            android:id="@+id/tvLastUpdateTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical"
+            android:text="@{Utils.INSTANCE.formatTimestampToTime(story.lastUpdateTimestamp)}"
+            app:layout_constraintBottom_toBottomOf="@+id/tvStoryTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvStoryTitle"
+            tools:text="@sample/timestamp" />
+
+        <TextView
+            android:id="@+id/tvWordCount"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical"
+            android:text="@{Integer.toString(story.wordCount).concat(story.wordCount == 1 ? ` word` : ` words`)}"
+            app:layout_constraintBottom_toBottomOf="@+id/tvStoryShort"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvStoryShort"
+            tools:text="@sample/word_count" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

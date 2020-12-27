@@ -116,7 +116,7 @@ class ProfileEntryFragment : Fragment() {
     private fun saveUserToFirebase(
         userName: String,
         userPhoneNumber: String,
-        userProfileImageUri: String? = null
+        userProfileImageUri: String = ""
     ) {
 
         // save user to firebase
@@ -124,7 +124,7 @@ class ProfileEntryFragment : Fragment() {
         usersRef.set(User(usersRef.id, userName, userPhoneNumber, userProfileImageUri))
             .addOnSuccessListener {
                 // save important data for later openings of Hiya (that skip registration)
-                saveProfileDataToSharedPrefs(usersRef.id, userName)
+                saveProfileDataToSharedPrefs(usersRef.id, userName, userProfileImageUri)
 
                 // user created in firebase
                 startMainActivity()
@@ -145,12 +145,13 @@ class ProfileEntryFragment : Fragment() {
         requireActivity().finish()
     }
 
-    private fun saveProfileDataToSharedPrefs(userId: String, username: String) {
+    private fun saveProfileDataToSharedPrefs(userId: String, username: String, profileImageUri: String) {
         val sharedPreferences = requireActivity().getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         editor.putString(Hiya.SHARED_PREFS_USER_ID, userId)
         editor.putString(Hiya.SHARED_PREFS_USERNAME, username)
+        editor.putString(Hiya.SHARED_PREFS_PROFILE_IMAGE_URI, profileImageUri)
         editor.apply()
     }
 

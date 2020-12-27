@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.ChatLogFragment">
-
+    tools:context=".ui.main.inprogress.StoryLogFragment">
 
     <ProgressBar
-        android:id="@+id/pbLoadRoom"
+        android:id="@+id/pbLoadLog"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,41 +18,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChatLog"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+    <TextView
+        android:id="@+id/tvStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_story"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/etNewMessage"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/etNewWord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:stackFromEnd="true"
-        tools:listitem="@layout/chat_log_item">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:text="@sample/story_long" />
 
     <EditText
-        android:id="@+id/etNewMessage"
+        android:id="@+id/etNewWord"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnSendNewMessage"
+        app:layout_constraintEnd_toStartOf="@+id/btnAddToStory"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnSendNewMessage"
+        android:id="@+id/btnAddToStory"
         android:layout_width="40dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_send_btn"
-        android:enabled="true"
+        android:enabled="false"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/etNewMessage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etNewMessage" />
+        app:layout_constraintBottom_toBottomOf="@+id/etNewWord"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

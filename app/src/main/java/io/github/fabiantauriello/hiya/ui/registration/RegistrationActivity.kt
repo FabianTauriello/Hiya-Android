@@ -27,7 +27,7 @@ class RegistrationActivity : AppCompatActivity() {
     private fun checkIfUserIsAlreadySignedIn() {
         // Check if user is signed in (non-null)
         val currentUser = Firebase.auth.currentUser
-        if(currentUser != null) {
+        if (currentUser != null) {
             startMainActivity()
         }
     }

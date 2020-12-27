@@ -1,41 +1,44 @@
 package io.github.fabiantauriello.hiya.domain
 
-import android.os.Parcel
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlin.collections.ArrayList
 
 @Parcelize
 data class User(
     val id: String,
     // When writing name to firebase, 'name' represents the value entered in
     // profile creation. In all other instances, this property represents the name
-    // saved for this contact on the user's phone
+    // saved for this contact on the user's phone TODO WHAT??
     val name: String,
     val phoneNumber: String,
-    val profileImageUri: String? = null
+    val profileImageUri: String = ""
 ) : Parcelable
 
 @Parcelize
-data class ChatRoom(
-    val id: String?,
-    val participants: ArrayList<Participant>,
-    val lastMessage: String?,
-    val lastMessageTimestamp: String?
+data class Story(
+    var id: String = "",
+    var title: String = "",
+    var text: String = "",
+    val lastUpdateTimestamp: String = "",
+    val wordCount: Int = 0,
+    val authors: ArrayList<Author> = arrayListOf()
 ) : Parcelable
 
 @Parcelize
-data class Participant(
-    val userId: String,
-    var name: String
+data class Author(
+    val userId: String = "",
+    var name: String = "",
+    val profileImageUri: String = ""
 ) : Parcelable
-
-data class Message(
-    val text: String,
-    val timestamp: String,
-    val sender: String
-)
 
 enum class FirestoreQueryStatus {
+    PENDING,
     SUCCESS,
     FAILURE
+}
+
+enum class EditingState {
+    NEW_STORY,
+    EXISTING_STORY
 }
