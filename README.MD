@@ -1,6 +1,6 @@
 # The Brief:  
   
-Kotlin messaging app.  
+Kotlin storytelling app.  
   
 ## Description  
   

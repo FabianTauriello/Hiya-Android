@@ -33,36 +33,33 @@ class StoryLogFragment : Fragment() {
 
     private val sharedViewModel: InProgressSharedViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate: ")
+    private var isNewStory = false
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        isNewStory = args.storyId.isEmpty()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(TAG, "onCreateView: ")
-
         binding = FragmentStoryLogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated: ")
-
         if (args.storyId.isEmpty()) {
-            // new story
+            // new story required
             findNavController().navigate(StoryLogFragmentDirections.actionStoryLogFragmentToEditStoryTitleDialog(args.coAuthor))
         } else {
-            // existing story
-            sharedViewModel.storyId = args.storyId
+            // existing story can be shown
+            sharedViewModel.updateStoryId(args.storyId)
             sharedViewModel.startListeningForTextChangesToStory()
         }
 
-        configureObservers()
-
+        binding.viewModel = sharedViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.btnAddToStory.setOnClickListener {
             val text = binding.etNewWord.text.toString().trim()
             binding.etNewWord.text.clear()
@@ -82,27 +79,20 @@ class StoryLogFragment : Fragment() {
                 // enable the button if the text input is not empty AND the user has entered only 1 word
                 binding.btnAddToStory.isEnabled = s.toString().trim().isNotEmpty() && numOfWordsEntered == Hiya.STORY_INPUT_LIMIT
             }
-
             override fun afterTextChanged(s: Editable?) {}
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         })
+
+        setupObservers()
     }
 
-    private fun configureObservers() {
+    private fun setupObservers() {
         // listen for when title has changed
         sharedViewModel.storyTitle.observe(viewLifecycleOwner, Observer { newTitle ->
-            Log.d(TAG, "configureObservers: NEW TITLE... $newTitle")
             (requireActivity() as AppCompatActivity).supportActionBar?.title = newTitle
-        })
-        // listen for when story text is changed
-        sharedViewModel.storyText.observe(viewLifecycleOwner, Observer { newText ->
-            Log.d(TAG, "configureObservers: NEW TEXT... $newText")
-            binding.tvStory.text = newText
         })
         // listen for when a new word has been added
         sharedViewModel.addNewWordStatus.observe(viewLifecycleOwner, Observer { status ->
-            Log.d(TAG, "configureObservers: NEW WORD STATUS... $status")
             when (status) {
                 QueryStatus.PENDING -> {}
                 QueryStatus.SUCCESS -> {
@@ -111,21 +101,6 @@ class StoryLogFragment : Fragment() {
                 QueryStatus.ERROR -> {
                     Toast.makeText(requireActivity(), "Failed to add word", Toast.LENGTH_SHORT).show()
                 }
-            }
-        })
-        sharedViewModel.wordCount.observe(viewLifecycleOwner, Observer { wordCount ->
-            // show story text view. testing for wordCount == 1 so visibility is only executed once
-            if (wordCount == 1 || args.storyId.isNotEmpty()) { // TODO replace "args.storyId.isNotEmpty()" with EDITING STATE ENUM
-                binding.tvStory.visibility = View.VISIBLE
-            }
-        })
-        // listen for when a new story has been created
-        sharedViewModel.createNewStoryStatus.observe(viewLifecycleOwner, Observer { status ->
-            Log.d(TAG, "configureObservers: NEW WORD STORY STATUS... $status")
-            if (status == QueryStatus.SUCCESS || args.storyId.isNotEmpty()) {
-                binding.pbLoadLog.visibility = View.GONE
-                binding.etNewWord.visibility = View.VISIBLE
-                binding.btnAddToStory.visibility = View.VISIBLE
             }
         })
     }

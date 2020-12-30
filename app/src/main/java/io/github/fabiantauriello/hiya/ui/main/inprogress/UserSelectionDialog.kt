@@ -124,16 +124,10 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
     // create new story with given contact
     override fun onUserClick(contact: User) {
         Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
-        sharedViewModel.updateUserListIsUnseenFlag(true)
         val action = UserSelectionDialogDirections.actionUserSelectionDialogToStoryLogFragment(
             Author(contact.id, contact.name, contact.profileImageUri)
         )
         findNavController().navigate(action)
-    }
-
-    // Update view model isCancelled flag to notify story list fragment that this fragment has cancelled.
-    override fun onCancel(dialog: DialogInterface) {
-        sharedViewModel.updateUserListIsUnseenFlag(true)
     }
 
 }

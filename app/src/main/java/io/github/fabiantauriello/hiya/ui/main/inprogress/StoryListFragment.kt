@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
@@ -30,7 +31,6 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(LC_TAG, "onCreate: called")
         adapter = StoryListAdapter(arrayListOf(), sharedViewModel, this)
     }
 
@@ -38,12 +38,9 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(LC_TAG, "onCreateView: called")
-
         binding = FragmentStoryListBinding.inflate(inflater, container, false)
         binding.rvInProgressStories.adapter = adapter
         binding.fabSelectUser.setOnClickListener {
-            sharedViewModel.updateUserListIsUnseenFlag(false)
             findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserSelectionDialog())
         }
 
@@ -51,8 +48,6 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(LC_TAG, "onViewCreated: called")
-
         sharedViewModel.startListeningForStories()
 
         // observe story list live data to populate rv
@@ -75,11 +70,6 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
             }
         })
 
-        // Observe user list flag and enable fab if user list is hidden
-        sharedViewModel.userListIsUnseen.observe(viewLifecycleOwner, Observer { userListIsHidden ->
-            binding.fabSelectUser.isEnabled = userListIsHidden
-        })
-
     }
 
     private fun removeProgressBar() {
@@ -96,11 +86,18 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
     }
 
     override fun onStoryClick(story: Story) {
-        findNavController().navigate(
-            StoryListFragmentDirections.actionStoryListFragmentToStoryLogFragment(
-                Utils.getCoAuthorForStory(story), story.id, story.title
+        /*
+        Check if the current destination matches this fragment because multiple quick taps of
+        navigation buttons can cause an exception. After committing to one navigation action,
+        Android can accept another action before the first one is complete, causing the exception.
+         */
+        if (findNavController().currentDestination?.id == R.id.storyListFragment) {
+            findNavController().navigate(
+                StoryListFragmentDirections.actionStoryListFragmentToStoryLogFragment(
+                    Utils.getCoAuthorForStory(story), story.id, story.title
+                )
             )
-        )
+        }
     }
 
     // OTHER LIFECYCLE METHODS - TODO DELETE LATER

@@ -21,53 +21,30 @@ class InProgressSharedViewModel() : ViewModel() {
     val storyListResponse: LiveData<FirestoreResponse<ArrayList<Story>>>
         get() = _storyListResponse
 
-    /*
-    Live data for monitoring whether the user list is shown. Without this, the button that opens the user
-    list can be clicked multiple times quickly, resulting in a crash because it attempts to navigate to
-    the user list destination twice (each time from a different origin).
-    */
-    private val _userListIsUnseen = MutableLiveData<Boolean>(true)
-    val userListIsUnseen: LiveData<Boolean>
-        get() = _userListIsUnseen
-
     private val _userListResponse = MutableLiveData<FirestoreResponse<ArrayList<User>>>()
     val userListResponse: LiveData<FirestoreResponse<ArrayList<User>>>
         get() = _userListResponse
 
     // STORY LOG LIVE DATA
 
-
-
-
-
-
-
-
     private val _addNewWordStatus = MutableLiveData<QueryStatus>(QueryStatus.PENDING)
     val addNewWordStatus: LiveData<QueryStatus>
         get() = _addNewWordStatus
 
-    private val _createNewStoryStatus = MutableLiveData<QueryStatus>(QueryStatus.PENDING)
-    val createNewStoryStatus: LiveData<QueryStatus>
-        get() = _createNewStoryStatus
-
-    private val _storyText = MutableLiveData<String>()
+    private val _storyText = MutableLiveData<String>("")
     val storyText: LiveData<String>
         get() = _storyText
 
-    private val _storyTitle = MutableLiveData<String>()
+    private val _storyTitle = MutableLiveData<String>("")
     val storyTitle: LiveData<String>
         get() = _storyTitle
 
-    private val _wordCount = MutableLiveData<Int>(0)
-    val wordCount: LiveData<Int>
-        get() = _wordCount
-
-    lateinit var storyId: String
+    private lateinit var storyId: String
 
     // STORY LIST AND USER SELECTION LOGIC
 
     fun getUsersWhoAreContacts() { // TODO ugly - make it prettier
+
         // The content URI of the phone table
         val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         // A "projection" defines the columns that will be returned for each row
@@ -111,7 +88,7 @@ class InProgressSharedViewModel() : ViewModel() {
 
                 // get all user documents and check if its phone number matches a phone number on the device
                 // If so, then add it to the contacts list variable
-                _userListResponse.value = FirestoreResponse.loading(null)
+                _userListResponse.postValue(FirestoreResponse.loading())
                 Firebase.firestore.collection("users").get()
                     .addOnSuccessListener { snapshot ->
                         if (!snapshot.isEmpty) {
@@ -136,22 +113,28 @@ class InProgressSharedViewModel() : ViewModel() {
                         }
                     }
                     .addOnFailureListener { exception ->
-                        _userListResponse.value = FirestoreResponse.error(exception.message ?: "Failed to retrieve users", null)
+                        _userListResponse.postValue(
+                            FirestoreResponse.error(
+                                exception.message ?: "Failed to retrieve users"
+                            )
+                        )
                     }
             }
         }
+
     }
 
     // listens to multiple documents
     fun startListeningForStories() {
-        _storyListResponse.value = FirestoreResponse.loading(null)
+        _storyListResponse.value = FirestoreResponse.loading()
 
         Firebase.firestore.collection("stories")
             .whereArrayContains("authors", Author(Hiya.userId, Hiya.username))
             .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
-                    _storyListResponse.value = FirestoreResponse.error(exception.message ?: "Failed to retrieve stories.", null)
+                    _storyListResponse.value =
+                        FirestoreResponse.error(exception.message ?: "Failed to retrieve stories.")
                     return@addSnapshotListener
                 }
 
@@ -163,10 +146,6 @@ class InProgressSharedViewModel() : ViewModel() {
                 Log.d(TAG, "startListeningForStories: about to update")
                 _storyListResponse.value = FirestoreResponse.success(newStories)
             }
-    }
-
-    fun updateUserListIsUnseenFlag(isUnseen: Boolean) {
-        _userListIsUnseen.value = isUnseen
     }
 
     // STORY LOG LOGIC
@@ -202,18 +181,18 @@ class InProgressSharedViewModel() : ViewModel() {
         storyRef.set(newStory)
             .addOnSuccessListener {
                 storyId = newStoryId
-                _createNewStoryStatus.value = QueryStatus.SUCCESS
                 _storyTitle.value = newTitle
                 startListeningForTextChangesToStory()
             }
             .addOnFailureListener {
-                _createNewStoryStatus.value = QueryStatus.ERROR
+
             }
     }
 
     fun addNewWord(newWord: String) {
         Firebase.firestore.runTransaction { transaction ->
-            val storyRef = Firebase.firestore.collection("stories").document(storyId) // TODO change "stories" path string to use constant
+            val storyRef = Firebase.firestore.collection("stories")
+                .document(storyId) // TODO change "stories" path string to use constant
             val snapshot = transaction.get(storyRef)
 
             val timestamp = System.currentTimeMillis().toString()
@@ -234,7 +213,6 @@ class InProgressSharedViewModel() : ViewModel() {
         }
             .addOnSuccessListener {
                 _addNewWordStatus.value = QueryStatus.SUCCESS
-                _wordCount.value = _wordCount.value?.plus(1)
             }
             .addOnFailureListener {
                 _addNewWordStatus.value = QueryStatus.ERROR
@@ -245,15 +223,17 @@ class InProgressSharedViewModel() : ViewModel() {
         _storyTitle.value = newTitle
     }
 
+    fun updateStoryId(newStoryId: String) {
+        storyId = newStoryId
+    }
+
     // OTHER LOGIC
 
     fun clearPropertiesForStoryLog() {
         storyId = ""
         _storyText.value = ""
         _storyTitle.value = ""
-        _wordCount.value = 0
         _addNewWordStatus.value = QueryStatus.PENDING
-        _createNewStoryStatus.value = QueryStatus.PENDING
     }
 
 }

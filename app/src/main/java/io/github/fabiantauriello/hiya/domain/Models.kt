@@ -37,25 +37,18 @@ data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val 
             return FirestoreResponse(QueryStatus.SUCCESS, data, null)
         }
 
-        fun <T> error(msg: String, data: T?): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.ERROR, data, msg)
+        fun <T> error(msg: String): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.ERROR, null, msg)
         }
 
-        fun <T> loading(data: T?): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.PENDING, data, null)
+        fun <T> loading(): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.PENDING, null, null)
         }
     }
 }
-
-
 
 enum class QueryStatus {
     PENDING,
     SUCCESS,
     ERROR
-}
-
-enum class EditingState {
-    NEW_STORY,
-    EXISTING_STORY
 }

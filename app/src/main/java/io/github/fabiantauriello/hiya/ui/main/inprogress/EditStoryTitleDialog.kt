@@ -41,16 +41,18 @@ class EditStoryTitleDialog : DialogFragment() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun afterTextChanged(s: Editable?) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    // don't let user enter an empty title
                     binding.btnDone.isEnabled = !s?.trim().isNullOrEmpty()
                 }
             }
         )
         binding.btnDone.setOnClickListener {
+            // create a new story
             sharedViewModel.createNewStory(args.coAuthor, binding.etTitle.text.trim().toString())
             dismiss()
         }
         binding.btnCancel.setOnClickListener {
-            // TODO try just dismissing or just using navigate()
+            // go back to story list
             findNavController().navigate(EditStoryTitleDialogDirections.actionEditStoryTitleDialogToStoryListFragment())
         }
     }
