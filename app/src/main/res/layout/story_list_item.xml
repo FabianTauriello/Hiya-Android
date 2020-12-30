@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
-
-    <data>
-        <import type="io.github.fabiantauriello.hiya.util.Utils" />
-        <variable
-            name="story"
-            type="io.github.fabiantauriello.hiya.domain.Story" />
-    </data>
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutChatRoomItem"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:chatRoomVisibility="@{story}">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/ivStoryPicture"
@@ -36,9 +28,8 @@
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="@{story.title}"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tvStoryShort"
+            app:layout_constraintBottom_toTopOf="@+id/tvStorySnippet"
             app:layout_constraintEnd_toStartOf="@+id/tvLastUpdateTimestamp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/ivStoryPicture"
@@ -46,7 +37,7 @@
             tools:text="@sample/story_title" />
 
         <TextView
-            android:id="@+id/tvStoryShort"
+            android:id="@+id/tvStorySnippet"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -54,7 +45,6 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="@{story.text}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvWordCount"
             app:layout_constraintStart_toEndOf="@+id/ivStoryPicture"
@@ -67,7 +57,6 @@
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
-            android:text="@{Utils.INSTANCE.formatTimestampToTime(story.lastUpdateTimestamp)}"
             app:layout_constraintBottom_toBottomOf="@+id/tvStoryTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvStoryTitle"
@@ -79,10 +68,9 @@
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
-            android:text="@{Integer.toString(story.wordCount).concat(story.wordCount == 1 ? ` word` : ` words`)}"
-            app:layout_constraintBottom_toBottomOf="@+id/tvStoryShort"
+            app:layout_constraintBottom_toBottomOf="@+id/tvStorySnippet"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvStoryShort"
+            app:layout_constraintTop_toTopOf="@+id/tvStorySnippet"
             tools:text="@sample/word_count" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

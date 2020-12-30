@@ -36,16 +36,20 @@ class StoryListAdapter(
     }
 
     override fun onBindViewHolder(holder: StoryItemViewHolder, position: Int) {
-        // set data binding variables
-        holder.binding.story = stories[position]
+        val story = stories[position]
+
+        // set various properties
+        holder.binding.tvStorySnippet.text = story.text
+        holder.binding.tvStoryTitle.text = story.title
+        holder.binding.tvLastUpdateTimestamp.text = Utils.formatTimestampToTime(story.lastUpdateTimestamp)
+        holder.binding.tvWordCount.text = "${story.wordCount}" + if (story.wordCount == 1) " word" else " words"
 
         // set image
-        val coAuthorProfileImageUri = Utils.getCoAuthorForStory(stories[position]).profileImageUri
+        val coAuthorProfileImageUri = Utils.getCoAuthorForStory(story).profileImageUri
         Log.d(TAG, "onBindViewHolder: $coAuthorProfileImageUri")
         val options: RequestOptions = RequestOptions()
 //            .override(450, 600)
             .error(R.drawable.ic_broken_image)
-
         Glide.with(holder.binding.ivStoryPicture.context)
             .load(coAuthorProfileImageUri)
             .apply(options)
@@ -53,7 +57,7 @@ class StoryListAdapter(
 
         // set click listener
         holder.binding.layoutChatRoomItem.setOnClickListener {
-            listener.onStoryClick(stories[position])
+            listener.onStoryClick(story)
         }
     }
 

@@ -35,23 +35,23 @@ class UserListAdapter(
     override fun getItemCount() = users.size
 
     override fun onBindViewHolder(holder: UserItemViewHolder, position: Int) {
-        // TODO use data binding here
+        val user = users[position]
+
+        // set name
+        holder.binding.tvContactName.text = user.name
+
         // set image
         val options: RequestOptions = RequestOptions()
 //            .override(450, 600)
             .error(R.drawable.ic_broken_image)
-
         Glide.with(holder.binding.ivContactPicture.context)
-            .load(users[position].profileImageUri)
+            .load(user.profileImageUri)
             .apply(options)
             .into(holder.binding.ivContactPicture)
 
-        // set name
-        holder.binding.tvContactName.text = users[position].name
-
         // set click listener
         holder.binding.layoutContactItem.setOnClickListener {
-            listener.onUserClick(users[position])
+            listener.onUserClick(user)
         }
 
     }

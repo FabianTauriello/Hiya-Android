@@ -30,11 +30,11 @@ class InProgressSharedViewModel() : ViewModel() {
     val userListIsUnseen: LiveData<Boolean>
         get() = _userListIsUnseen
 
-    // STORY LOG LIVE DATA
-
     private val _userListResponse = MutableLiveData<FirestoreResponse<ArrayList<User>>>()
     val userListResponse: LiveData<FirestoreResponse<ArrayList<User>>>
         get() = _userListResponse
+
+    // STORY LOG LIVE DATA
 
 
 
