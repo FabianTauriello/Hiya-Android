@@ -47,6 +47,8 @@ data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val 
     }
 }
 
+
+
 enum class QueryStatus {
     PENDING,
     SUCCESS,

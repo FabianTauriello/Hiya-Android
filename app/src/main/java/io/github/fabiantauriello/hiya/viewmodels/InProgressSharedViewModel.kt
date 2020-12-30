@@ -142,6 +142,7 @@ class InProgressSharedViewModel() : ViewModel() {
         }
     }
 
+    // listens to multiple documents
     fun startListeningForStories() {
         _storyListResponse.value = FirestoreResponse.loading(null)
 
@@ -170,7 +171,8 @@ class InProgressSharedViewModel() : ViewModel() {
 
     // STORY LOG LOGIC
 
-    fun configureMessagesListener() {
+    // listen to one document
+    fun startListeningForTextChangesToStory() {
         Log.d(TAG, "configureMessagesListener: called")
         Firebase.firestore.collection("stories").document(storyId)
             .addSnapshotListener { snapshot, e ->
@@ -202,7 +204,7 @@ class InProgressSharedViewModel() : ViewModel() {
                 storyId = newStoryId
                 _createNewStoryStatus.value = QueryStatus.SUCCESS
                 _storyTitle.value = newTitle
-                configureMessagesListener()
+                startListeningForTextChangesToStory()
             }
             .addOnFailureListener {
                 _createNewStoryStatus.value = QueryStatus.ERROR

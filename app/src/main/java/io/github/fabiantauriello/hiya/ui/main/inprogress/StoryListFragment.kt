@@ -68,7 +68,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
                     removeProgressBar()
                 }
                 QueryStatus.ERROR -> {
-                    Log.d(TAG, "onViewCreated: failed")
+                    Log.d(TAG, "failed")
                     showError()
                     removeProgressBar()
                 }

@@ -58,7 +58,7 @@ class StoryLogFragment : Fragment() {
         } else {
             // existing story
             sharedViewModel.storyId = args.storyId
-            sharedViewModel.configureMessagesListener()
+            sharedViewModel.startListeningForTextChangesToStory()
         }
 
         configureObservers()
