@@ -152,6 +152,7 @@ class ProfileEntryFragment : Fragment() {
         editor.putString(Hiya.SHARED_PREFS_USER_ID, userId)
         editor.putString(Hiya.SHARED_PREFS_USERNAME, username)
         editor.putString(Hiya.SHARED_PREFS_PROFILE_IMAGE_URI, profileImageUri)
+        editor.putStringSet("stories", mutableSetOf("s", ""))
         editor.apply()
     }
 

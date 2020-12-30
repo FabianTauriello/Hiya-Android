@@ -2,7 +2,6 @@ package io.github.fabiantauriello.hiya.domain
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import kotlin.collections.ArrayList
 
 @Parcelize
 data class User(
@@ -32,10 +31,26 @@ data class Author(
     val profileImageUri: String = ""
 ) : Parcelable
 
-enum class FirestoreQueryStatus {
+data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val message: String?) {
+    companion object {
+        fun <T> success(data: T): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.SUCCESS, data, null)
+        }
+
+        fun <T> error(msg: String, data: T?): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.ERROR, data, msg)
+        }
+
+        fun <T> loading(data: T?): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.PENDING, data, null)
+        }
+    }
+}
+
+enum class QueryStatus {
     PENDING,
     SUCCESS,
-    FAILURE
+    ERROR
 }
 
 enum class EditingState {

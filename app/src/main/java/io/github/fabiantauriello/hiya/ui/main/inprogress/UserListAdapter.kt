@@ -7,33 +7,34 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
-import io.github.fabiantauriello.hiya.databinding.ContactListItemBinding
+import io.github.fabiantauriello.hiya.databinding.UserListItemBinding
+import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.domain.User
 
-class ContactSelectionAdapter(
-    private val contactList: ArrayList<User>,
-    private val listener: ContactClickListener
-) : RecyclerView.Adapter<ContactSelectionAdapter.ContactItemViewHolder>() {
+class UserListAdapter(
+    private val users: ArrayList<User>,
+    private val listener: UserClickListener
+) : RecyclerView.Adapter<UserListAdapter.UserItemViewHolder>() {
 
     private val LOG_TAG = this::class.simpleName
 
-    class ContactItemViewHolder(
-        val binding: ContactListItemBinding
+    class UserItemViewHolder(
+        val binding: UserListItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactItemViewHolder {
-        val binding = DataBindingUtil.inflate<ContactListItemBinding>(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserItemViewHolder {
+        val binding = DataBindingUtil.inflate<UserListItemBinding>(
             LayoutInflater.from(parent.context),
-            R.layout.contact_list_item,
+            R.layout.user_list_item,
             parent,
             false
         )
-        return ContactItemViewHolder(binding)
+        return UserItemViewHolder(binding)
     }
 
-    override fun getItemCount() = contactList.size
+    override fun getItemCount() = users.size
 
-    override fun onBindViewHolder(holder: ContactItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: UserItemViewHolder, position: Int) {
         // TODO use data binding here
         // set image
         val options: RequestOptions = RequestOptions()
@@ -41,18 +42,24 @@ class ContactSelectionAdapter(
             .error(R.drawable.ic_broken_image)
 
         Glide.with(holder.binding.ivContactPicture.context)
-            .load(contactList[position].profileImageUri)
+            .load(users[position].profileImageUri)
             .apply(options)
             .into(holder.binding.ivContactPicture)
 
         // set name
-        holder.binding.tvContactName.text = contactList[position].name
+        holder.binding.tvContactName.text = users[position].name
 
         // set click listener
         holder.binding.layoutContactItem.setOnClickListener {
-            listener.onContactClick(contactList[position])
+            listener.onUserClick(users[position])
         }
 
+    }
+
+    fun update(newUsers: ArrayList<User>) {
+        users.clear()
+        users.addAll(newUsers)
+        notifyDataSetChanged()
     }
 
 

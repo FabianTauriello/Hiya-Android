@@ -62,6 +62,7 @@ class StoryListAdapter(
     fun update(newStories: ArrayList<Story>) {
         stories.clear()
         stories.addAll(newStories)
+        notifyDataSetChanged()
     }
 
     fun getStories(): ArrayList<Story> {

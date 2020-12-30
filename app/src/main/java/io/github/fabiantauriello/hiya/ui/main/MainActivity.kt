@@ -18,6 +18,7 @@ import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
 import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
 
     private val TAG = this::class.java.name

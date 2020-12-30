@@ -18,7 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryLogBinding
-import io.github.fabiantauriello.hiya.domain.FirestoreQueryStatus
+import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
 
 
@@ -104,11 +104,11 @@ class StoryLogFragment : Fragment() {
         sharedViewModel.addNewWordStatus.observe(viewLifecycleOwner, Observer { status ->
             Log.d(TAG, "configureObservers: NEW WORD STATUS... $status")
             when (status) {
-                FirestoreQueryStatus.PENDING -> {}
-                FirestoreQueryStatus.SUCCESS -> {
+                QueryStatus.PENDING -> {}
+                QueryStatus.SUCCESS -> {
                     Toast.makeText(requireActivity(), "Successfully added word!", Toast.LENGTH_SHORT).show()
                 }
-                FirestoreQueryStatus.FAILURE -> {
+                QueryStatus.ERROR -> {
                     Toast.makeText(requireActivity(), "Failed to add word", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -122,7 +122,7 @@ class StoryLogFragment : Fragment() {
         // listen for when a new story has been created
         sharedViewModel.createNewStoryStatus.observe(viewLifecycleOwner, Observer { status ->
             Log.d(TAG, "configureObservers: NEW WORD STORY STATUS... $status")
-            if (status == FirestoreQueryStatus.SUCCESS || args.storyId.isNotEmpty()) {
+            if (status == QueryStatus.SUCCESS || args.storyId.isNotEmpty()) {
                 binding.pbLoadLog.visibility = View.GONE
                 binding.etNewWord.visibility = View.VISIBLE
                 binding.btnAddToStory.visibility = View.VISIBLE

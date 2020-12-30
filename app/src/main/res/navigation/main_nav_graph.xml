@@ -14,8 +14,8 @@
             android:id="@+id/action_storyListFragment_to_storyLogFragment"
             app:destination="@id/storyLogFragment" />
         <action
-            android:id="@+id/action_storyListFragment_to_contactSelectionDialog"
-            app:destination="@id/contactSelectionDialog" />
+            android:id="@+id/action_storyListFragment_to_userSelectionDialog"
+            app:destination="@id/userSelectionDialog" />
     </fragment>
     <fragment
         android:id="@+id/storyLogFragment"
@@ -37,14 +37,11 @@
             android:defaultValue="" />
     </fragment>
     <dialog
-        android:id="@+id/contactSelectionDialog"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.ContactSelectionDialog"
+        android:id="@+id/userSelectionDialog"
+        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserSelectionDialog"
         android:label="Select a contact">
-        <argument
-            android:name="contactsPermissionGranted"
-            app:argType="boolean" />
         <action
-            android:id="@+id/action_contactSelectionDialog_to_storyLogFragment"
+            android:id="@+id/action_userSelectionDialog_to_storyLogFragment"
             app:destination="@id/storyLogFragment" />
     </dialog>
     <fragment
@@ -67,8 +64,6 @@
             app:argType="io.github.fabiantauriello.hiya.domain.Author" />
         <action
             android:id="@+id/action_editStoryTitleDialog_to_storyListFragment"
-            app:destination="@id/storyListFragment"
-            app:popUpTo="@id/storyListFragment"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@id/storyListFragment" />
     </dialog>
 </navigation>

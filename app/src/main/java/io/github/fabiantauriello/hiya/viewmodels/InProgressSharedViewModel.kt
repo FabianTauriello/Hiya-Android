@@ -9,30 +9,47 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.FirestoreQueryStatus
-import io.github.fabiantauriello.hiya.domain.Author
-import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.domain.User
+import io.github.fabiantauriello.hiya.domain.*
 
 class InProgressSharedViewModel() : ViewModel() {
 
     private val TAG = this::class.java.name
 
-    private val _addNewWordStatus = MutableLiveData<FirestoreQueryStatus>(FirestoreQueryStatus.PENDING)
-    val addNewWordStatus: LiveData<FirestoreQueryStatus>
+    // STORY LIST AND USER SELECTION LIVE DATA
+
+    private val _storyListResponse = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
+    val storyListResponse: LiveData<FirestoreResponse<ArrayList<Story>>>
+        get() = _storyListResponse
+
+    /*
+    Live data for monitoring whether the user list is shown. Without this, the button that opens the user
+    list can be clicked multiple times quickly, resulting in a crash because it attempts to navigate to
+    the user list destination twice (each time from a different origin).
+    */
+    private val _userListIsUnseen = MutableLiveData<Boolean>(true)
+    val userListIsUnseen: LiveData<Boolean>
+        get() = _userListIsUnseen
+
+    // STORY LOG LIVE DATA
+
+    private val _userListResponse = MutableLiveData<FirestoreResponse<ArrayList<User>>>()
+    val userListResponse: LiveData<FirestoreResponse<ArrayList<User>>>
+        get() = _userListResponse
+
+
+
+
+
+
+
+
+    private val _addNewWordStatus = MutableLiveData<QueryStatus>(QueryStatus.PENDING)
+    val addNewWordStatus: LiveData<QueryStatus>
         get() = _addNewWordStatus
 
-    private val _createNewStoryStatus = MutableLiveData<FirestoreQueryStatus>(FirestoreQueryStatus.PENDING)
-    val createNewStoryStatus: LiveData<FirestoreQueryStatus>
+    private val _createNewStoryStatus = MutableLiveData<QueryStatus>(QueryStatus.PENDING)
+    val createNewStoryStatus: LiveData<QueryStatus>
         get() = _createNewStoryStatus
-
-    private val _contacts = MutableLiveData<ArrayList<User>>()
-    val contacts: LiveData<ArrayList<User>>
-        get() = _contacts
-
-    private val _storyList = MutableLiveData<ArrayList<Story>>()
-    val storyList: LiveData<ArrayList<Story>>
-        get() = _storyList
 
     private val _storyText = MutableLiveData<String>()
     val storyText: LiveData<String>
@@ -48,9 +65,9 @@ class InProgressSharedViewModel() : ViewModel() {
 
     lateinit var storyId: String
 
-    // STORY LIST LOGIC
+    // STORY LIST AND USER SELECTION LOGIC
 
-    fun getUsersMatchingContactsOnDevice() {
+    fun getUsersWhoAreContacts() { // TODO ugly - make it prettier
         // The content URI of the phone table
         val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         // A "projection" defines the columns that will be returned for each row
@@ -68,13 +85,15 @@ class InProgressSharedViewModel() : ViewModel() {
             null -> {
                 // Insert code here to handle the error. Be sure not to use the cursor!
                 // You may want to call android.util.Log.e() to log this error.
+                // TODO
             }
             0 -> {
                 // Insert code here to notify the user that no contacts were found. This isn't
                 // necessarily an error.
+                // TODO
             }
             else -> {
-                // Insert code here to do something with the results
+                // Use the results
 
                 val deviceContactNameList = arrayListOf<String>()
                 val deviceContactPhoneNumberList = arrayListOf<String>()
@@ -92,6 +111,7 @@ class InProgressSharedViewModel() : ViewModel() {
 
                 // get all user documents and check if its phone number matches a phone number on the device
                 // If so, then add it to the contacts list variable
+                _userListResponse.value = FirestoreResponse.loading(null)
                 Firebase.firestore.collection("users").get()
                     .addOnSuccessListener { snapshot ->
                         if (!snapshot.isEmpty) {
@@ -112,27 +132,25 @@ class InProgressSharedViewModel() : ViewModel() {
                                     )
                                 }
                             }
-                            _contacts.value = matchingContacts
+                            _userListResponse.value = FirestoreResponse.success(matchingContacts)
                         }
                     }
-                    .addOnFailureListener {
-
+                    .addOnFailureListener { exception ->
+                        _userListResponse.value = FirestoreResponse.error(exception.message ?: "Failed to retrieve users", null)
                     }
             }
         }
     }
 
-    fun configureStoriesListener() {
-        /*
-        * You can listen to a document with the onSnapshot() method. An initial call using the callback you
-        * provide creates a document snapshot immediately with the current contents of the single document.
-        * Then, each time the contents change, another call updates the document snapshot.
-        */
+    fun startListeningForStories() {
+        _storyListResponse.value = FirestoreResponse.loading(null)
+
         Firebase.firestore.collection("stories")
             .whereArrayContains("authors", Author(Hiya.userId, Hiya.username))
             .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    _storyListResponse.value = FirestoreResponse.error(exception.message ?: "Failed to retrieve stories.", null)
                     return@addSnapshotListener
                 }
 
@@ -141,8 +159,13 @@ class InProgressSharedViewModel() : ViewModel() {
                     val story = doc.toObject(Story::class.java)!!
                     newStories.add(story)
                 }
-                _storyList.value = newStories
+                Log.d(TAG, "startListeningForStories: about to update")
+                _storyListResponse.value = FirestoreResponse.success(newStories)
             }
+    }
+
+    fun updateUserListIsUnseenFlag(isUnseen: Boolean) {
+        _userListIsUnseen.value = isUnseen
     }
 
     // STORY LOG LOGIC
@@ -167,21 +190,22 @@ class InProgressSharedViewModel() : ViewModel() {
         Log.d(TAG, "createNewStory: called")
         val storyRef = Firebase.firestore.collection("stories").document()
         val newStoryId = storyRef.id
+        val timestamp = System.currentTimeMillis().toString()
         val newParticipants = arrayListOf(
             Author(Hiya.userId, Hiya.username, Hiya.profileImageUri),
             Author(coAuthor.userId, coAuthor.name, coAuthor.profileImageUri)
         )
-        val newStory = Story(id = newStoryId, title = newTitle, authors = newParticipants)
+        val newStory = Story(newStoryId, newTitle, "", timestamp, 0, newParticipants)
 
         storyRef.set(newStory)
             .addOnSuccessListener {
                 storyId = newStoryId
-                _createNewStoryStatus.value = FirestoreQueryStatus.SUCCESS
+                _createNewStoryStatus.value = QueryStatus.SUCCESS
                 _storyTitle.value = newTitle
                 configureMessagesListener()
             }
             .addOnFailureListener {
-                _createNewStoryStatus.value = FirestoreQueryStatus.FAILURE
+                _createNewStoryStatus.value = QueryStatus.ERROR
             }
     }
 
@@ -207,26 +231,27 @@ class InProgressSharedViewModel() : ViewModel() {
             null
         }
             .addOnSuccessListener {
-                _addNewWordStatus.value = FirestoreQueryStatus.SUCCESS
+                _addNewWordStatus.value = QueryStatus.SUCCESS
                 _wordCount.value = _wordCount.value?.plus(1)
             }
             .addOnFailureListener {
-                _addNewWordStatus.value = FirestoreQueryStatus.FAILURE
+                _addNewWordStatus.value = QueryStatus.ERROR
             }
-    }
-
-    fun clearPropertiesForStoryLog() {
-        storyId = ""
-        _storyText.value = ""
-        _storyTitle.value = ""
-        _wordCount.value = 0
-        _addNewWordStatus.value = FirestoreQueryStatus.PENDING
-        _createNewStoryStatus.value = FirestoreQueryStatus.PENDING
     }
 
     fun updateTitle(newTitle: String) {
         _storyTitle.value = newTitle
     }
 
+    // OTHER LOGIC
+
+    fun clearPropertiesForStoryLog() {
+        storyId = ""
+        _storyText.value = ""
+        _storyTitle.value = ""
+        _wordCount.value = 0
+        _addNewWordStatus.value = QueryStatus.PENDING
+        _createNewStoryStatus.value = QueryStatus.PENDING
+    }
 
 }

@@ -1,5 +1,8 @@
 package io.github.fabiantauriello.hiya.util
 
+import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.Story
@@ -37,4 +40,14 @@ object Utils {
     fun getCoAuthorForStory(story: Story): Author {
         return story.authors.filter { it.userId != Hiya.userId }[0]
     }
+
+    // debugging only
+    fun displayBackStack(tag: String, navController: NavController) {
+        val backStack = navController.backStack
+        Log.d(tag, "BackStack (count = ${backStack.count()})...")
+        for (frag in backStack) {
+            Log.d(tag, frag.destination.displayName)
+        }
+    }
+
 }

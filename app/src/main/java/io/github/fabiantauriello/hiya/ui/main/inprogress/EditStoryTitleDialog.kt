@@ -50,7 +50,7 @@ class EditStoryTitleDialog : DialogFragment() {
             dismiss()
         }
         binding.btnCancel.setOnClickListener {
-            dismiss()
+            // TODO try just dismissing or just using navigate()
             findNavController().navigate(EditStoryTitleDialogDirections.actionEditStoryTitleDialogToStoryListFragment())
         }
     }
