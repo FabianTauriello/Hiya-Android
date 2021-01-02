@@ -20,6 +20,7 @@ data class Story(
     var title: String = "",
     var text: String = "",
     val lastUpdateTimestamp: String = "",
+    val isCompleted: Boolean = false,
     val wordCount: Int = 0,
     val authors: ArrayList<Author> = arrayListOf()
 ) : Parcelable
@@ -28,6 +29,7 @@ data class Story(
 data class Author(
     val userId: String = "",
     var name: String = "",
+    var markedStoryAsComplete: Boolean = false,
     val profileImageUri: String = ""
 ) : Parcelable
 

@@ -25,12 +25,16 @@ class EditStoryTitleDialog : DialogFragment() {
 
     private val sharedViewModel: InProgressSharedViewModel by activityViewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // prevent user from cancelling this dialog by tapping outside of view
+        isCancelable = false
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // prevent user from cancelling this dialog by tapping outside of view
-        isCancelable = false
         binding = EditStoryTitleDialogBinding.inflate(inflater, container, false)
         return binding.root
     }

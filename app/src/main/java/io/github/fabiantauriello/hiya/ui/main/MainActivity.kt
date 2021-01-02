@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     private val sharedViewModel: InProgressSharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate() called")
         super.onCreate(savedInstanceState)
 
         // initialize binding and set layout
@@ -37,10 +36,10 @@ class MainActivity : AppCompatActivity() {
         // set global variables user id and username for easy access to user node in Firestore
         val sharedPreferences = getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
         Hiya.userId = sharedPreferences.getString(Hiya.SHARED_PREFS_USER_ID, "") ?: ""
-        Hiya.username = sharedPreferences.getString(Hiya.SHARED_PREFS_USERNAME, "") ?: ""
+        Hiya.name = sharedPreferences.getString(Hiya.SHARED_PREFS_USERNAME, "") ?: ""
         Hiya.profileImageUri = sharedPreferences.getString(Hiya.SHARED_PREFS_PROFILE_IMAGE_URI, "") ?: ""
 
-        val navController = findNavController(R.id.nav_host_fragment)
+        val navController = findNavController(R.id.navHostFragment)
 
         // initialize action bar with my toolbar
         setSupportActionBar(toolbar)
@@ -51,16 +50,20 @@ class MainActivity : AppCompatActivity() {
             R.id.completedStoriesFragment,
             R.id.settingsFragment
         ).build()
+
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // configure bottom nav
-        binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
 
         // change action bar title based on story title or just use default label one from fragment
         sharedViewModel.storyTitle.observe(this, Observer {
             Log.d(TAG, "new title: $it")
             if (it.isNotEmpty()) {
                 supportActionBar?.title = it
+            } else {
+                Log.d(TAG, "onCreate: ${navController.currentDestination?.label}")
+                supportActionBar?.title = navController.currentDestination?.label
             }
         })
     }
@@ -68,13 +71,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onSupportNavigateUp(): Boolean {
-        Log.d(TAG, "onSupportNavigateUp: up pressed")
-
         // hide keyboard if shown
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
-        return findNavController(R.id.nav_host_fragment).navigateUp() || super.onSupportNavigateUp()
+        return findNavController(R.id.navHostFragment).navigateUp() || super.onSupportNavigateUp()
     }
 
 

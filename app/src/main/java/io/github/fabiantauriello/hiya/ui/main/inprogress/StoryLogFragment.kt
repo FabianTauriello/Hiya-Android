@@ -1,5 +1,6 @@
 package io.github.fabiantauriello.hiya.ui.main.inprogress
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,6 +26,7 @@ import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
 // individual chat between users
 class StoryLogFragment : Fragment() {
 
+    private val LC_TAG = "LC_LOG"
     private val TAG = this::class.java.name
 
     private val args: StoryLogFragmentArgs by navArgs()
@@ -49,17 +51,19 @@ class StoryLogFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // SETUP
+
         if (args.storyId.isEmpty()) {
             // new story required
             findNavController().navigate(StoryLogFragmentDirections.actionStoryLogFragmentToEditStoryTitleDialog(args.coAuthor))
         } else {
             // existing story can be shown
             sharedViewModel.updateStoryId(args.storyId)
-            sharedViewModel.startListeningForTextChangesToStory()
+            sharedViewModel.listenForChangesToStory()
         }
 
-        binding.viewModel = sharedViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
+        // VIEW LISTENERS
+
         binding.btnAddToStory.setOnClickListener {
             val text = binding.etNewWord.text.toString().trim()
             binding.etNewWord.text.clear()
@@ -82,14 +86,16 @@ class StoryLogFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         })
+        binding.tvStoryLog.setOnClickListener {
+            findNavController().navigate(StoryLogFragmentDirections.actionStoryLogFragmentToStoryFullScreen())
+        }
 
-        setupObservers()
-    }
+        // OBSERVERS
 
-    private fun setupObservers() {
-        // listen for when title has changed
-        sharedViewModel.storyTitle.observe(viewLifecycleOwner, Observer { newTitle ->
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = newTitle
+        // listen for story text changes
+        sharedViewModel.storyText.observe(viewLifecycleOwner, Observer { text ->
+            binding.tvStoryLog.text = text
+            binding.tvStoryLog.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
         })
         // listen for when a new word has been added
         sharedViewModel.addNewWordStatus.observe(viewLifecycleOwner, Observer { status ->
@@ -105,22 +111,40 @@ class StoryLogFragment : Fragment() {
         })
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        sharedViewModel.updateTitle(args.storyTitle)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d(LC_TAG, "log onAttach: called")
     }
 
     override fun onResume() {
-        // hide bottom navigation bar
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation).visibility = View.GONE
         super.onResume()
+        Log.d(LC_TAG, "log onResume: called")
+        // hide bottom navigation bar
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNav).visibility = View.GONE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(LC_TAG, "log onDestroy: called $id")
+        // show navigation bar
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNav).visibility = View.VISIBLE
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d(LC_TAG, "log onDetach: called")
     }
 
     override fun onStop() {
         super.onStop()
-        // show navigation bar
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation).visibility = View.VISIBLE
-        sharedViewModel.clearPropertiesForStoryLog()
+        Log.d(LC_TAG, "log onStop: called")
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(LC_TAG, "log onPause: called")
+    }
+
+
 
 }

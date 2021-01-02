@@ -1,21 +1,24 @@
 package io.github.fabiantauriello.hiya.viewmodels
 
 import android.provider.ContactsContract
+import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class InProgressSharedViewModel() : ViewModel() {
 
     private val TAG = this::class.java.name
-
-    // STORY LIST AND USER SELECTION LIVE DATA
 
     private val _storyListResponse = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
     val storyListResponse: LiveData<FirestoreResponse<ArrayList<Story>>>
@@ -24,8 +27,6 @@ class InProgressSharedViewModel() : ViewModel() {
     private val _userListResponse = MutableLiveData<FirestoreResponse<ArrayList<User>>>()
     val userListResponse: LiveData<FirestoreResponse<ArrayList<User>>>
         get() = _userListResponse
-
-    // STORY LOG LIVE DATA
 
     private val _addNewWordStatus = MutableLiveData<QueryStatus>(QueryStatus.PENDING)
     val addNewWordStatus: LiveData<QueryStatus>
@@ -39,9 +40,9 @@ class InProgressSharedViewModel() : ViewModel() {
     val storyTitle: LiveData<String>
         get() = _storyTitle
 
-    private lateinit var storyId: String
+    var markedAsComplete: Boolean = false
 
-    // STORY LIST AND USER SELECTION LOGIC
+    private lateinit var storyId: String
 
     fun getUsersWhoAreContacts() { // TODO ugly - make it prettier
 
@@ -125,13 +126,26 @@ class InProgressSharedViewModel() : ViewModel() {
     }
 
     // listens to multiple documents
-    fun startListeningForStories() {
+    fun listenForStories() {
         _storyListResponse.value = FirestoreResponse.loading()
 
+        val authorThatHasNotMarkedStoryAsComplete = Author(Hiya.userId, Hiya.name)
+        val authorThatHasMarkedStoryAsComplete = Author(
+            Hiya.userId,
+            Hiya.name,
+            markedStoryAsComplete = true
+        )
+
         Firebase.firestore.collection("stories")
-            .whereArrayContains("authors", Author(Hiya.userId, Hiya.username))
+            .whereArrayContainsAny(
+                "authors", listOf(
+                    authorThatHasNotMarkedStoryAsComplete,
+                    authorThatHasMarkedStoryAsComplete
+                )
+            )
             .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, exception ->
+                Log.d(TAG, "listenForStories: called")
                 if (exception != null) {
                     _storyListResponse.value =
                         FirestoreResponse.error(exception.message ?: "Failed to retrieve stories.")
@@ -143,24 +157,41 @@ class InProgressSharedViewModel() : ViewModel() {
                     val story = doc.toObject(Story::class.java)!!
                     newStories.add(story)
                 }
-                Log.d(TAG, "startListeningForStories: about to update")
                 _storyListResponse.value = FirestoreResponse.success(newStories)
             }
     }
 
-    // STORY LOG LOGIC
-
-    // listen to one document
-    fun startListeningForTextChangesToStory() {
-        Log.d(TAG, "configureMessagesListener: called")
+    // listen to one story document for changes. called once at beginning and then again with each change
+    // THIS SHOULD ONLY BE CALLED ONCE! And everything else should just listen to the changes made (e.g storyText)
+    fun listenForChangesToStory() {
         Firebase.firestore.collection("stories").document(storyId)
             .addSnapshotListener { snapshot, e ->
+                Log.d(TAG, "listenForChangesToStory: called")
                 if (e != null) {
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    _storyText.value = snapshot.getString("text")!!
+                    // update whether the user has marked the story as complete
+                    val authorMapList = snapshot.get("authors") as List<Map<String, Object>>
+                    val authorList = arrayListOf<Author>()
+                    for (author in authorMapList) {
+                        authorList.add(
+                            Author(
+                                author["userId"].toString(), author["name"].toString(), author["markedStoryAsComplete"].toString().toBoolean()
+                            )
+                        )
+                    }
+                    val author = authorList.filter { it.userId == Hiya.userId }
+                    if (author.isNotEmpty()) {
+                        markedAsComplete = author[0].markedStoryAsComplete
+                    }
+
+                    // update story title
+                    _storyTitle.value = snapshot.getString("title")
+
+                    // update story text
+                    _storyText.value = snapshot.getString("text")
                 } else {
                     Log.d(TAG, "Current data: null")
                 }
@@ -168,21 +199,25 @@ class InProgressSharedViewModel() : ViewModel() {
     }
 
     fun createNewStory(coAuthor: Author, newTitle: String) {
-        Log.d(TAG, "createNewStory: called")
         val storyRef = Firebase.firestore.collection("stories").document()
         val newStoryId = storyRef.id
         val timestamp = System.currentTimeMillis().toString()
-        val newParticipants = arrayListOf(
-            Author(Hiya.userId, Hiya.username, Hiya.profileImageUri),
-            Author(coAuthor.userId, coAuthor.name, coAuthor.profileImageUri)
+        val newAuthors = arrayListOf(
+            Author(Hiya.userId, Hiya.name, false, Hiya.profileImageUri),
+            Author(
+                coAuthor.userId,
+                coAuthor.name,
+                coAuthor.markedStoryAsComplete,
+                coAuthor.profileImageUri
+            )
         )
-        val newStory = Story(newStoryId, newTitle, "", timestamp, 0, newParticipants)
+        val newStory = Story(newStoryId, newTitle, "", timestamp, false, 0, newAuthors)
 
         storyRef.set(newStory)
             .addOnSuccessListener {
                 storyId = newStoryId
                 _storyTitle.value = newTitle
-                startListeningForTextChangesToStory()
+                listenForChangesToStory()
             }
             .addOnFailureListener {
 
@@ -227,13 +262,28 @@ class InProgressSharedViewModel() : ViewModel() {
         storyId = newStoryId
     }
 
-    // OTHER LOGIC
+    fun markAsComplete(isComplete: Boolean) {
+        val authorToRemove = Author(Hiya.userId, Hiya.name, !isComplete, Hiya.profileImageUri)
+        val authorToAdd = Author(Hiya.userId, Hiya.name, isComplete, Hiya.profileImageUri)
 
-    fun clearPropertiesForStoryLog() {
-        storyId = ""
-        _storyText.value = ""
-        _storyTitle.value = ""
-        _addNewWordStatus.value = QueryStatus.PENDING
+        val storyDoc = Firebase.firestore.collection("stories").document(storyId)
+
+            Firebase.firestore.runBatch {
+                // remove author element
+                storyDoc.update("authors", FieldValue.arrayRemove(authorToRemove))
+
+                // re-add author with new value for property 'markedStoryAsComplete'
+                storyDoc.update("authors", FieldValue.arrayUnion(authorToAdd))
+
+            }
+                .addOnSuccessListener {
+
+                }
+                .addOnFailureListener {
+
+                }
+
+
     }
 
 }

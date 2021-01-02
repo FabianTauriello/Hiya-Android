@@ -42,12 +42,12 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = UserSelectionDialogBinding.inflate(inflater, container, false)
-        binding.rvUsers.adapter = adapter
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.rvUsers.adapter = adapter
+
         requestContactsPermission()
     }
 
@@ -79,8 +79,11 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
                     // Explain to the user that the feature is unavailable because
                     // the features requires a permission that the user has denied.
                     // At the same time, respect the user's decision.
-                    showUserListTitle()
-                    showPhoneEntryLayout()
+
+                    // Show user list title
+                    binding.tvUserSelectionTitle.visibility = View.VISIBLE
+                    // Show phone entry layout
+                    binding.layoutPhoneEntry.visibility = View.VISIBLE
                 }
             }
         }
@@ -95,37 +98,23 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
                 }
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
-                    showUserListTitle()
-                    showUserListLayout()
+                    // Show user list title
+                    binding.tvUserSelectionTitle.visibility = View.VISIBLE
+                    // Show user list layout
+                    binding.layoutUserList.visibility = View.VISIBLE
                 }
                 QueryStatus.ERROR -> {
-                    showError()
+                    // TODO
                 }
             }
         })
-    }
-
-    private fun showPhoneEntryLayout() {
-        binding.layoutPhoneEntry.visibility = View.VISIBLE
-    }
-
-    private fun showUserListLayout() {
-        binding.layoutUserList.visibility = View.VISIBLE
-    }
-
-    private fun showUserListTitle() {
-        binding.tvUserSelectionTitle.visibility = View.VISIBLE
-    }
-
-    private fun showError() {
-        // TODO
     }
 
     // create new story with given contact
     override fun onUserClick(contact: User) {
         Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
         val action = UserSelectionDialogDirections.actionUserSelectionDialogToStoryLogFragment(
-            Author(contact.id, contact.name, contact.profileImageUri)
+            Author(contact.id, contact.name, false, contact.profileImageUri)
         )
         findNavController().navigate(action)
     }

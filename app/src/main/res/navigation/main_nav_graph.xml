@@ -35,6 +35,9 @@
             android:name="storyTitle"
             app:argType="string"
             android:defaultValue="" />
+        <action
+            android:id="@+id/action_storyLogFragment_to_storyFullScreen"
+            app:destination="@id/storyFullScreen" />
     </fragment>
     <dialog
         android:id="@+id/userSelectionDialog"
@@ -66,4 +69,9 @@
             android:id="@+id/action_editStoryTitleDialog_to_storyListFragment"
             app:popUpTo="@id/storyListFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/storyFullScreen"
+        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryFullScreen"
+        android:label="fragment_story_full_screen"
+        tools:layout="@layout/fragment_story_full_screen" />
 </navigation>

@@ -20,7 +20,7 @@ import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
 // chat rooms
 class StoryListFragment : Fragment(), StoryListItemClickListener {
 
-    private val LC_TAG = "LC_SLF"
+    private val LC_TAG = "LC_STORY_LIST"
     private val TAG = this::class.java.name
 
     private lateinit var binding: FragmentStoryListBinding
@@ -39,50 +39,48 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentStoryListBinding.inflate(inflater, container, false)
-        binding.rvInProgressStories.adapter = adapter
-        binding.fabSelectUser.setOnClickListener {
-            findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserSelectionDialog())
-        }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        sharedViewModel.startListeningForStories()
+
+        // SETUP
+
+        sharedViewModel.listenForStories()
+        binding.rvInProgressStories.adapter = adapter
+
+        // VIEW LISTENERS
+
+        binding.fabSelectUser.setOnClickListener {
+            if (findNavController().currentDestination?.id == R.id.storyListFragment) {
+                findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserSelectionDialog())
+            }
+        }
+
+        // OBSERVERS
 
         // observe story list live data to populate rv
         sharedViewModel.storyListResponse.observe(viewLifecycleOwner, Observer { response ->
-            Log.d(TAG, "onViewCreated: response = ${response.queryStatus}")
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {
-                    Log.d(TAG, "onViewCreated: pending")
-                }
+                QueryStatus.PENDING -> {}
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
-                    showData()
-                    removeProgressBar()
+                    // show data in view
+                    binding.rvInProgressStories.visibility = View.VISIBLE
+                    // show fab
+                    binding.fabSelectUser.visibility = View.VISIBLE
+                    // remove progress bar
+                    binding.pbLoadContacts.visibility = View.GONE
                 }
                 QueryStatus.ERROR -> {
                     Log.d(TAG, "failed")
-                    showError()
-                    removeProgressBar()
+                    // TODO
+                    // remove progress bar
+                    binding.pbLoadContacts.visibility = View.GONE
                 }
             }
         })
 
-    }
-
-    private fun removeProgressBar() {
-        binding.pbLoadContacts.visibility = View.GONE
-    }
-
-    private fun showData() {
-        binding.rvInProgressStories.visibility = View.VISIBLE
-        binding.fabSelectUser.visibility = View.VISIBLE
-    }
-
-    private fun showError() {
-        // TODO
     }
 
     override fun onStoryClick(story: Story) {

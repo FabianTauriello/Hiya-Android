@@ -21,7 +21,7 @@ class Hiya : Application() {
 
         // TODO consider rethinking how these values are stored. Should they be nullable instead??
         var userId = ""
-        var username = ""
+        var name = ""
         var profileImageUri = ""
 
         private var instance: Hiya? = null
