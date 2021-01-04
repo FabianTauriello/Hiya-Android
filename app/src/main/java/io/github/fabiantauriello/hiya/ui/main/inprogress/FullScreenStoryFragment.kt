@@ -8,44 +8,44 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import io.github.fabiantauriello.hiya.R
-import io.github.fabiantauriello.hiya.databinding.FragmentStoryFullScreenBinding
-import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
+import io.github.fabiantauriello.hiya.databinding.FragmentFullScreenStoryBinding
+import io.github.fabiantauriello.hiya.viewmodels.StoryLogViewModel
 
 
-class StoryFullScreen : Fragment() {
+class FullScreenStoryFragment : Fragment() {
 
     private val LC_TAG = "LC_FULL"
     private val TAG = this::class.java.name
 
-    private lateinit var binding: FragmentStoryFullScreenBinding
+    private lateinit var binding: FragmentFullScreenStoryBinding
 
-    private val sharedViewModel: InProgressSharedViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val viewModel: StoryLogViewModel by navGraphViewModels(R.id.storyLogNestedGraph)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentStoryFullScreenBinding.inflate(inflater, container, false)
+        binding = FragmentFullScreenStoryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // set up 'complete' toggle for what decision the user has (or hasn't) made in the past
-        binding.toggleComplete.isChecked = sharedViewModel.markedAsComplete
+        // SETUP
 
         // initialize story text view
-        binding.tvStoryFull.text = sharedViewModel.storyText.value
+        binding.tvStoryFull.text = viewModel.storyLogText.value
 
-        binding.toggleComplete.setOnCheckedChangeListener { _, isComplete ->
+        // VIEW LISTENERS
+
+        binding.toggleDone.setOnCheckedChangeListener { _, isComplete ->
             Log.d(TAG, "onViewCreated: $isComplete")
-            sharedViewModel.markAsComplete(isComplete)
+            viewModel.changeIsDoneFlag(isComplete)
+        }
+        binding.fabEditDetails.setOnClickListener {
+            findNavController().navigate(FullScreenStoryFragmentDirections.actionFullScreenStoryFragmentToEditStoryDetailsFragment())
         }
 
     }

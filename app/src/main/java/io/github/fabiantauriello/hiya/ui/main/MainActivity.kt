@@ -1,13 +1,11 @@
 package io.github.fabiantauriello.hiya.ui.main
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -15,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
-import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
+import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val sharedViewModel: InProgressSharedViewModel by viewModels()
+    private val viewModel: InProgressActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,25 +54,56 @@ class MainActivity : AppCompatActivity() {
         // configure bottom nav
         binding.bottomNav.setupWithNavController(navController)
 
-        // change action bar title based on story title or just use default label one from fragment
-        sharedViewModel.storyTitle.observe(this, Observer {
-            Log.d(TAG, "new title: $it")
-            if (it.isNotEmpty()) {
-                supportActionBar?.title = it
-            } else {
-                Log.d(TAG, "onCreate: ${navController.currentDestination?.label}")
-                supportActionBar?.title = navController.currentDestination?.label
+//        // change action bar title based on story title or just use default label one from fragment
+//        sharedViewModel.storyLogTitle.observe(this, Observer {
+//            if (it.isNotEmpty()) {
+//                supportActionBar?.title = it
+//            } else {
+//                Log.d(TAG, "onCreate: ${navController.currentDestination?.label}")
+//                supportActionBar?.title = navController.currentDestination?.label
+//            }
+//        })
+
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.fullScreenStoryFragment -> {
+                    hideNavBar()
+                    hideToolbar()
+                }
+                R.id.editStoryDetailsFragment -> {
+                    hideNavBar()
+                    showToolbar()
+                }
+                R.id.storyLogFragment ->  {
+                    hideNavBar()
+                }
+                else -> {
+                    showNavBar()
+                    showToolbar()
+                }
             }
-        })
+        }
+
     }
 
+    private fun showNavBar() {
+        binding.bottomNav.visibility = View.VISIBLE
+    }
 
+    private fun hideNavBar() {
+        binding.bottomNav.visibility = View.GONE
+    }
+
+    private fun showToolbar() {
+        binding.toolbar.visibility = View.VISIBLE
+    }
+
+    private fun hideToolbar() {
+        binding.toolbar.visibility = View.GONE
+    }
 
     override fun onSupportNavigateUp(): Boolean {
-        // hide keyboard if shown
-        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-
         return findNavController(R.id.navHostFragment).navigateUp() || super.onSupportNavigateUp()
     }
 

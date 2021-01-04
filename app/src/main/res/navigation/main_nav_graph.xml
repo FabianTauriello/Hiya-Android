@@ -2,76 +2,66 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation"
+    android:id="@+id/main_nav_graph"
     app:startDestination="@id/storyListFragment">
-
+    <dialog
+        android:id="@+id/userSelectionDialog"
+        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserSelectionDialog"
+        android:label="Select a contact">
+        <action
+            android:id="@+id/action_userSelectionDialog_to_StoryLogFragment"
+            app:destination="@id/storyLogNestedGraph" />
+    </dialog>
     <fragment
         android:id="@+id/storyListFragment"
         android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryListFragment"
         android:label="In Progress"
         tools:layout="@layout/fragment_story_list">
         <action
-            android:id="@+id/action_storyListFragment_to_storyLogFragment"
-            app:destination="@id/storyLogFragment" />
-        <action
             android:id="@+id/action_storyListFragment_to_userSelectionDialog"
             app:destination="@id/userSelectionDialog" />
+        <action
+            android:id="@+id/action_storyListFragment_to_StoryLogFragment"
+            app:destination="@id/storyLogNestedGraph" />
     </fragment>
-    <fragment
-        android:id="@+id/storyLogFragment"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryLogFragment"
-        tools:layout="@layout/fragment_story_log" >
+    <navigation android:id="@+id/storyLogNestedGraph"
+        app:startDestination="@id/storyLogFragment">
         <argument
             android:name="coAuthor"
             app:argType="io.github.fabiantauriello.hiya.domain.Author" />
-        <action
-            android:id="@+id/action_storyLogFragment_to_editStoryTitleDialog"
-            app:destination="@id/editStoryTitleDialog" />
         <argument
             android:name="storyId"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
-            android:name="storyTitle"
-            app:argType="string"
-            android:defaultValue="" />
-        <action
-            android:id="@+id/action_storyLogFragment_to_storyFullScreen"
-            app:destination="@id/storyFullScreen" />
-    </fragment>
-    <dialog
-        android:id="@+id/userSelectionDialog"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserSelectionDialog"
-        android:label="Select a contact">
-        <action
-            android:id="@+id/action_userSelectionDialog_to_storyLogFragment"
-            app:destination="@id/storyLogFragment" />
-    </dialog>
-    <fragment
-        android:id="@+id/completedStoriesFragment"
-        android:name="io.github.fabiantauriello.hiya.ui.main.completed.CompletedStoriesFragment"
-        android:label="Completed"
-        tools:layout="@layout/fragment_completed_stories" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="io.github.fabiantauriello.hiya.ui.main.SettingsFragment"
-        android:label="Settings"
-        tools:layout="@layout/fragment_settings" />
-    <dialog
-        android:id="@+id/editStoryTitleDialog"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.EditStoryTitleDialog"
-        android:label="Edit Title"
-        tools:layout="@layout/edit_story_title_dialog" >
-        <argument
-            android:name="coAuthor"
-            app:argType="io.github.fabiantauriello.hiya.domain.Author" />
-        <action
-            android:id="@+id/action_editStoryTitleDialog_to_storyListFragment"
-            app:popUpTo="@id/storyListFragment" />
-    </dialog>
-    <fragment
-        android:id="@+id/storyFullScreen"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryFullScreen"
-        android:label="fragment_story_full_screen"
-        tools:layout="@layout/fragment_story_full_screen" />
+            android:defaultValue=""
+            app:argType="string" />
+        <fragment
+            android:id="@+id/storyLogFragment"
+            android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryLogFragment"
+            android:label="Story Log"
+            tools:layout="@layout/fragment_story_log">
+            <argument
+                android:name="coAuthor"
+                app:argType="io.github.fabiantauriello.hiya.domain.Author" />
+            <argument
+                android:name="storyId"
+                android:defaultValue=""
+                app:argType="string" />
+            <action
+                android:id="@+id/action_storyLogFragment_to_fullScreenStoryFragment"
+                app:destination="@id/fullScreenStoryFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/fullScreenStoryFragment"
+            android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.FullScreenStoryFragment"
+            android:label="Full Screen"
+            tools:layout="@layout/fragment_full_screen_story">
+            <action
+                android:id="@+id/action_fullScreenStoryFragment_to_editStoryDetailsFragment"
+                app:destination="@id/editStoryDetailsFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/editStoryDetailsFragment"
+            android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.EditStoryDetailsFragment"
+            android:label="Edit Details"
+            tools:layout="@layout/fragment_edit_story_details" />
+    </navigation>
 </navigation>

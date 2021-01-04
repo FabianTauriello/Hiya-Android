@@ -1,21 +1,18 @@
 package io.github.fabiantauriello.hiya.ui.main.inprogress
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.StoryListItemBinding
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
-import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
+import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
 
 class StoryListAdapter(
     private val stories: ArrayList<Story>,
-    private val viewModel: InProgressSharedViewModel,
+    private val viewModel: InProgressActivityViewModel,
     private val listener: StoryListItemClickListener
 ) : RecyclerView.Adapter<StoryListAdapter.StoryItemViewHolder>() {
 
@@ -45,15 +42,15 @@ class StoryListAdapter(
         holder.binding.tvWordCount.text = "${story.wordCount}" + if (story.wordCount == 1) " word" else " words"
 
         // set image
-        val coAuthorProfileImageUri = Utils.getCoAuthorForStory(story).profileImageUri
-        Log.d(TAG, "onBindViewHolder: $coAuthorProfileImageUri")
-        val options: RequestOptions = RequestOptions()
-//            .override(450, 600)
-            .error(R.drawable.ic_broken_image)
-        Glide.with(holder.binding.ivStoryPicture.context)
-            .load(coAuthorProfileImageUri)
-            .apply(options)
-            .into(holder.binding.ivStoryPicture)
+//        val coAuthorProfileImageUri = Utils.getCoAuthorForStory(story).profileImageUri
+//        Log.d(TAG, "onBindViewHolder: $coAuthorProfileImageUri")
+//        val options: RequestOptions = RequestOptions()
+////            .override(450, 600)
+//            .error(R.drawable.ic_broken_image)
+//        Glide.with(holder.binding.ivStoryPicture.context)
+//            .load(coAuthorProfileImageUri)
+//            .apply(options)
+//            .into(holder.binding.ivStoryPicture)
 
         // set click listener
         holder.binding.layoutChatRoomItem.setOnClickListener {

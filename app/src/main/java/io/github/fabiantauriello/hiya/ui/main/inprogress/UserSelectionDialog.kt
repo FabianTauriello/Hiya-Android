@@ -1,7 +1,6 @@
 package io.github.fabiantauriello.hiya.ui.main.inprogress
 
 import android.Manifest
-import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,7 +18,7 @@ import io.github.fabiantauriello.hiya.databinding.UserSelectionDialogBinding
 import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.User
-import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
+import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
 
 
 class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
@@ -27,7 +27,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
 
     private lateinit var binding: UserSelectionDialogBinding
 
-    private val sharedViewModel: InProgressSharedViewModel by activityViewModels()
+    private val viewModel: InProgressActivityViewModel by activityViewModels()
 
     private lateinit var adapter: UserListAdapter
 
@@ -60,7 +60,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
             )
         } else {
             // Permission is already granted, get and show user list
-            sharedViewModel.getUsersWhoAreContacts()
+            viewModel.getUsersWhoAreContacts()
             observeUsersResponse()
         }
     }
@@ -73,7 +73,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
         when (requestCode) {
             Hiya.CONTACTS_PERMISSION_REQUEST_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    sharedViewModel.getUsersWhoAreContacts()
+                    viewModel.getUsersWhoAreContacts()
                     observeUsersResponse()
                 } else {
                     // Explain to the user that the feature is unavailable because
@@ -91,7 +91,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
 
     private fun observeUsersResponse() {
         // Observe users live data to populate rv
-        sharedViewModel.userListResponse.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.userListResponse.observe(viewLifecycleOwner, Observer { response ->
             when (response.queryStatus) {
                 QueryStatus.PENDING -> {
                     Log.d(TAG, "observeUsersResponse: pending")
@@ -114,7 +114,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
     override fun onUserClick(contact: User) {
         Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
         val action = UserSelectionDialogDirections.actionUserSelectionDialogToStoryLogFragment(
-            Author(contact.id, contact.name, false, contact.profileImageUri)
+            Author(contact.id, false)
         )
         findNavController().navigate(action)
     }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.R
@@ -15,7 +16,7 @@ import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
-import io.github.fabiantauriello.hiya.viewmodels.InProgressSharedViewModel
+import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
 
 // chat rooms
 class StoryListFragment : Fragment(), StoryListItemClickListener {
@@ -25,13 +26,13 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
     private lateinit var binding: FragmentStoryListBinding
 
-    private val sharedViewModel: InProgressSharedViewModel by activityViewModels()
+    private val viewModel: InProgressActivityViewModel by activityViewModels()
 
     private lateinit var adapter: StoryListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = StoryListAdapter(arrayListOf(), sharedViewModel, this)
+        adapter = StoryListAdapter(arrayListOf(), viewModel, this)
     }
 
     override fun onCreateView(
@@ -46,7 +47,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
         // SETUP
 
-        sharedViewModel.listenForStories()
+        viewModel.listenForStories()
         binding.rvInProgressStories.adapter = adapter
 
         // VIEW LISTENERS
@@ -60,9 +61,10 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         // OBSERVERS
 
         // observe story list live data to populate rv
-        sharedViewModel.storyListResponse.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.storyListResponse.observe(viewLifecycleOwner, Observer { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {}
+                QueryStatus.PENDING -> {
+                }
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
                     // show data in view
@@ -73,7 +75,6 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
                     binding.pbLoadContacts.visibility = View.GONE
                 }
                 QueryStatus.ERROR -> {
-                    Log.d(TAG, "failed")
                     // TODO
                     // remove progress bar
                     binding.pbLoadContacts.visibility = View.GONE
@@ -92,7 +93,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         if (findNavController().currentDestination?.id == R.id.storyListFragment) {
             findNavController().navigate(
                 StoryListFragmentDirections.actionStoryListFragmentToStoryLogFragment(
-                    Utils.getCoAuthorForStory(story), story.id, story.title
+                    Utils.getCoAuthorForStory(story), story.id
                 )
             )
         }
