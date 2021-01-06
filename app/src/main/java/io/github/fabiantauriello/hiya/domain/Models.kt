@@ -22,6 +22,7 @@ data class Story(
     var lastUpdateTimestamp: String = "",
     val finished: Boolean = false,
     var wordCount: Int = 0,
+    var nextTurn: String = "",
     val authors: ArrayList<String> = arrayListOf(),
     val authorsLiked: ArrayList<String> = arrayListOf(),
     val authorsDone: ArrayList<String> = arrayListOf()

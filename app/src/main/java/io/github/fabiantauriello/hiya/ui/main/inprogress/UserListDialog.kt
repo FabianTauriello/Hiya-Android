@@ -79,10 +79,9 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
                     // the features requires a permission that the user has denied.
                     // At the same time, respect the user's decision.
 
-                    // Show user list title
-                    binding.tvUserSelectionTitle.visibility = View.VISIBLE
+                    showUserListTitle()
                     // Show phone entry layout
-                    binding.layoutPhoneEntry.visibility = View.VISIBLE
+                    showPhoneEntryLayout()
                 }
             }
         }
@@ -97,14 +96,26 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
                 }
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
-                    binding.tvUserSelectionTitle.visibility = View.VISIBLE
-                    binding.layoutUserList.visibility = View.VISIBLE
+                    showUserListTitle()
+                    showUserListLayout()
                 }
                 QueryStatus.ERROR -> {
                     // TODO
                 }
             }
         })
+    }
+
+    private fun showUserListLayout() {
+        binding.layoutUserList.visibility = View.VISIBLE
+    }
+
+    private fun showPhoneEntryLayout() {
+        binding.layoutPhoneEntry.visibility = View.VISIBLE
+    }
+
+    private fun showUserListTitle() {
+        binding.tvUserListTitle.visibility = View.VISIBLE
     }
 
     // create new story with given contact

@@ -11,8 +11,13 @@
         android:icon="@drawable/ic_book"
         android:title="Completed"/>
     <item
+        android:id="@+id/likedFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_like_filled"
+        android:title="Liked"/>
+    <item
         android:id="@+id/settingsFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/bottom_nav_settings"/>
+        android:icon="@drawable/ic_profile"
+        android:title="Profile"/>
 </menu>

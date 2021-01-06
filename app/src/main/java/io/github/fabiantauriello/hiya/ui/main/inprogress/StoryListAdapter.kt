@@ -35,7 +35,7 @@ class StoryListAdapter(
     override fun onBindViewHolder(holder: StoryItemViewHolder, position: Int) {
         val story = stories[position]
 
-        // set various properties
+        // set list item properties
         holder.binding.tvStorySnippet.text = story.text
         holder.binding.tvStoryTitle.text = story.title
         holder.binding.tvLastUpdateTimestamp.text = Utils.formatTimestampToTime(story.lastUpdateTimestamp)

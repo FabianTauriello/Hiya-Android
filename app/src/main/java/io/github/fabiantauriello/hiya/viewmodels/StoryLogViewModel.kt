@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.*
@@ -35,11 +36,10 @@ class StoryLogViewModel : ViewModel() {
 //        get() = _isDone
 
 
-
     // listen to one story document for changes. called once at beginning and then again with each change
     // THIS SHOULD ONLY BE CALLED ONCE! And everything else should just listen to the changes made (e.g storyText)
     fun listenForChangesToStory() {
-        db.collection("stories").document(storyId)
+        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
             .addSnapshotListener { snapshot, e ->
                 Log.d(TAG, "listenForChangesToStory: called")
                 if (e != null) {
@@ -56,23 +56,23 @@ class StoryLogViewModel : ViewModel() {
     }
 
     fun addAuthorToDoneList() {
-        db.collection("stories").document(storyId)
+        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
             .update("authorsDone", FieldValue.arrayUnion(Hiya.userId))
     }
 
     fun removeAuthorFromDoneList() {
-        db.collection("stories").document(storyId)
+        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
             .update("authorsDone", FieldValue.arrayRemove(Hiya.userId))
     }
 
     fun createNewStory(coAuthorId: String) {
         // Initialize Firebase refs
-        val storyRef = db.collection("stories").document()
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document()
 
         // Build new story
         val newStoryId = storyRef.id
         val newTimestamp = System.currentTimeMillis().toString()
-        val newStory = Story(newStoryId, "", "", newTimestamp, false, 0, arrayListOf(Hiya.userId, coAuthorId))
+        val newStory = Story(newStoryId, "", "", newTimestamp, false, 0, Hiya.userId, arrayListOf(Hiya.userId, coAuthorId))
 
         // Add new story doc
         storyRef.set(newStory)
@@ -89,10 +89,11 @@ class StoryLogViewModel : ViewModel() {
 
     fun addNewWord(newWord: String) {
         db.runTransaction { transaction ->
-            val storyRef = Firebase.firestore.collection("stories").document(storyId) // TODO change "stories" path string to use constant
+            val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId) // TODO change "stories" path string to use constant
             val snapshot = transaction.get(storyRef)
 
             val timestamp = System.currentTimeMillis().toString()
+            val coAuthorId = (snapshot.get("authors") as ArrayList<String>).filter { it != Hiya.userId }[0]
             val newWordCount = snapshot.getDouble("wordCount")!! + 1
             var newText = snapshot.getString("text")!!
             if (newText.isNotEmpty()) {
@@ -104,6 +105,7 @@ class StoryLogViewModel : ViewModel() {
             transaction.update(storyRef, "lastUpdateTimestamp", timestamp)
             transaction.update(storyRef, "wordCount", newWordCount)
             transaction.update(storyRef, "text", newText)
+            transaction.update(storyRef, "nextTurn", coAuthorId)
 
             // Success
             null

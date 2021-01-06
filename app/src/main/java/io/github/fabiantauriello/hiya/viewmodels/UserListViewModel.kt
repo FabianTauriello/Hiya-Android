@@ -68,7 +68,7 @@ class UserListViewModel : ViewModel() {
                 // get all user documents and check if its phone number matches a phone number on the device
                 // If so, then add it to the contacts list variable
                 _userListResponse.postValue(FirestoreResponse.loading())
-                db.collection("users")
+                db.collection(Hiya.USERS_COLLECTION_PATH)
                     .get() // TODO do where contains here because there could be many users
                     .addOnSuccessListener { snapshot ->
                         if (!snapshot.isEmpty) {

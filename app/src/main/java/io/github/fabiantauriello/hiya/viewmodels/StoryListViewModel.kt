@@ -28,8 +28,8 @@ class StoryListViewModel : ViewModel() {
         Log.d(TAG, "listenForStories: called")
         _storyListResponse.value = FirestoreResponse.loading()
 
-        val userStoriesRef = db.collection("stories")
-            .whereArrayContains("authors", Hiya.userId)
+        val userStoriesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
+            .whereArrayContains(Hiya.AUTHORS_COLLECTION_PATH, Hiya.userId)
             .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
 
         userStoriesRef.addSnapshotListener { snapshot, error ->
