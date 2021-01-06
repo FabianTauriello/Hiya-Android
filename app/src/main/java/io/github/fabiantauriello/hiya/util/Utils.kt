@@ -36,7 +36,9 @@ object Utils {
         }
     }
 
-
+    fun getCoAuthor(story: Story): String {
+        return story.authors.filter { it != Hiya.userId }[0] // will only work with stories with 2 authors
+    }
 
 
 

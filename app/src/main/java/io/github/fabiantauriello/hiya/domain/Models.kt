@@ -3,14 +3,15 @@ package io.github.fabiantauriello.hiya.domain
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
+// initialized with empty values to get deserialization from FireStore to work
 @Parcelize
 data class User(
-    val id: String,
+    val id: String = "",
     // When writing name to firebase, 'name' represents the value entered in
     // profile creation. In all other instances, this property represents the name
     // saved for this contact on the user's phone TODO WHAT??
-    val name: String,
-    val phoneNumber: String,
+    val name: String = "",
+    val phoneNumber: String = "",
     val profileImageUri: String = ""
 ) : Parcelable
 

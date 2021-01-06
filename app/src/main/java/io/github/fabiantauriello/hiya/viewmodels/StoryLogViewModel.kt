@@ -10,6 +10,7 @@ import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.*
+import io.github.fabiantauriello.hiya.util.Utils
 
 class StoryLogViewModel : ViewModel() {
 
@@ -93,7 +94,7 @@ class StoryLogViewModel : ViewModel() {
             val snapshot = transaction.get(storyRef)
 
             val timestamp = System.currentTimeMillis().toString()
-            val coAuthorId = (snapshot.get("authors") as ArrayList<String>).filter { it != Hiya.userId }[0]
+            val coAuthorId = Utils.getCoAuthor(snapshot.toObject(Story::class.java)!!)
             val newWordCount = snapshot.getDouble("wordCount")!! + 1
             var newText = snapshot.getString("text")!!
             if (newText.isNotEmpty()) {
@@ -104,8 +105,8 @@ class StoryLogViewModel : ViewModel() {
             // update fields in db
             transaction.update(storyRef, "lastUpdateTimestamp", timestamp)
             transaction.update(storyRef, "wordCount", newWordCount)
-            transaction.update(storyRef, "text", newText)
             transaction.update(storyRef, "nextTurn", coAuthorId)
+            transaction.update(storyRef, "text", newText)
 
             // Success
             null

@@ -4,14 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.StoryListItemBinding
 import io.github.fabiantauriello.hiya.domain.Story
+import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.util.Utils
 import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 
 class StoryListAdapter(
-    private val stories: ArrayList<Story>,
+    private val stories: ArrayList<Pair<User, Story>>,
     private val viewModel: StoryListViewModel,
     private val listener: StoryListItemClickListener
 ) : RecyclerView.Adapter<StoryListAdapter.StoryItemViewHolder>() {
@@ -33,24 +36,23 @@ class StoryListAdapter(
     }
 
     override fun onBindViewHolder(holder: StoryItemViewHolder, position: Int) {
-        val story = stories[position]
+        val user = stories[position].first
+        val story = stories[position].second
 
         // set list item properties
+        holder.binding.tvStoryTitle.text = user.name
         holder.binding.tvStorySnippet.text = story.text
-        holder.binding.tvStoryTitle.text = story.title
         holder.binding.tvLastUpdateTimestamp.text = Utils.formatTimestampToTime(story.lastUpdateTimestamp)
         holder.binding.tvWordCount.text = "${story.wordCount}" + if (story.wordCount == 1) " word" else " words"
 
         // set image
-//        val coAuthorProfileImageUri = Utils.getCoAuthorForStory(story).profileImageUri
-//        Log.d(TAG, "onBindViewHolder: $coAuthorProfileImageUri")
-//        val options: RequestOptions = RequestOptions()
-////            .override(450, 600)
-//            .error(R.drawable.ic_broken_image)
-//        Glide.with(holder.binding.ivStoryPicture.context)
-//            .load(coAuthorProfileImageUri)
-//            .apply(options)
-//            .into(holder.binding.ivStoryPicture)
+        val options: RequestOptions = RequestOptions()
+//            .override(450, 600)
+            .error(R.drawable.ic_profile)
+        Glide.with(holder.binding.ivStoryPicture.context)
+            .load(user.profileImageUri)
+            .apply(options)
+            .into(holder.binding.ivStoryPicture)
 
         // set click listener
         holder.binding.layoutChatRoomItem.setOnClickListener {
@@ -60,13 +62,17 @@ class StoryListAdapter(
 
     override fun getItemCount() = stories.size
 
-    fun update(newStories: ArrayList<Story>) {
-        stories.clear()
-        stories.addAll(newStories)
+    fun addItem(pair: Pair<User, Story>) {
+        stories.add(pair)
         notifyDataSetChanged()
     }
 
-    fun getStories(): ArrayList<Story> {
+    fun clearList() {
+        stories.clear()
+        notifyDataSetChanged()
+    }
+
+    fun getStories(): ArrayList<Pair<User, Story>> {
         return stories
     }
 

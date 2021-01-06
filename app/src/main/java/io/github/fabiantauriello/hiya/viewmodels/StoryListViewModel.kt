@@ -1,6 +1,5 @@
 package io.github.fabiantauriello.hiya.viewmodels
 
-import android.provider.ContactsContract
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +21,10 @@ class StoryListViewModel : ViewModel() {
     private val _storyListResponse = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
     val storyListResponse: LiveData<FirestoreResponse<ArrayList<Story>>>
         get() = _storyListResponse
+
+    private val _userStoryPairResponse = MutableLiveData<FirestoreResponse<Pair<User, Story>>>()
+    val userStoryPairResponse: LiveData<FirestoreResponse<Pair<User, Story>>>
+        get() = _userStoryPairResponse
 
     // listens to multiple documents
     fun listenForStories() {
@@ -45,6 +48,16 @@ class StoryListViewModel : ViewModel() {
                 newStories.add(story)
             }
             _storyListResponse.value = FirestoreResponse.success(newStories)
+        }
+    }
+
+    fun getUserInfo(userId: String, story: Story) {
+        val userRef = db.collection(Hiya.USERS_COLLECTION_PATH).document(userId)
+        userRef.get().addOnSuccessListener { document ->
+            if (document != null) {
+                val data = Pair(document.toObject(User::class.java)!!, story)
+                _userStoryPairResponse.value = FirestoreResponse.success(data)
+            }
         }
     }
 

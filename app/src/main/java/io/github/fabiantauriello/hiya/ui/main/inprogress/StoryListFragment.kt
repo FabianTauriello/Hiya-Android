@@ -14,6 +14,7 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
+import io.github.fabiantauriello.hiya.util.Utils
 import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 
 // chat rooms
@@ -64,24 +65,45 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
                 QueryStatus.PENDING -> {
                 }
                 QueryStatus.SUCCESS -> {
-                    adapter.update(response.data!!)
-                    // show data in view
-                    binding.rvInProgressStories.visibility = View.VISIBLE
-                    // show fab
-                    binding.fabSelectUser.visibility = View.VISIBLE
-                    // remove progress bar
-                    binding.pbLoadContacts.visibility = View.GONE
+                    adapter.clearList()
+                    for (story in response.data!!) {
+                        val userId = Utils.getCoAuthor(story)
+                        viewModel.getUserInfo(userId, story)
+                    }
                 }
                 QueryStatus.ERROR -> {
                     // TODO
                     // remove progress bar
-                    binding.pbLoadContacts.visibility = View.GONE
+                    removeProgressBar()
                 }
+            }
+        })
+        viewModel.userStoryPairResponse.observe(viewLifecycleOwner, Observer { response ->
+            when (response.queryStatus) {
+                QueryStatus.SUCCESS -> {
+                    adapter.addItem(response.data!!)
+                    showRecyclerView()
+                    showFab()
+                    removeProgressBar()
+                }
+                QueryStatus.PENDING -> {}
+                QueryStatus.ERROR -> {}
             }
         })
 
     }
 
+    private fun showRecyclerView() {
+        binding.rvInProgressStories.visibility = View.VISIBLE
+    }
+
+    private fun showFab() {
+        binding.fabSelectUser.visibility = View.VISIBLE
+    }
+
+    private fun removeProgressBar() {
+        binding.pbLoadContacts.visibility = View.GONE
+    }
 
     override fun onStoryClick(story: Story) {
         /*
