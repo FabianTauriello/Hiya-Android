@@ -1,7 +1,6 @@
 package io.github.fabiantauriello.hiya.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +12,8 @@ import androidx.navigation.ui.setupWithNavController
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
-import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
+import io.github.fabiantauriello.hiya.viewmodels.UserListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,7 +23,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: InProgressActivityViewModel by viewModels()
+    // activity ViewModels for storing story list and user list for lifecycle of activity
+    private val storyListViewModel: StoryListViewModel by viewModels()
+    private val userListViewModel: UserListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

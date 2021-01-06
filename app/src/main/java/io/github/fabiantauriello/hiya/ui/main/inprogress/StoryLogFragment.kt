@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -16,7 +14,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryLogBinding
@@ -36,14 +33,17 @@ class StoryLogFragment : Fragment() {
 
     private val viewModel: StoryLogViewModel by navGraphViewModels(R.id.storyLogNestedGraph)
 
-    private var isNewStory = false
+    private var newStoryRequired = false
 
+    private var isDone = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // enable options menu for actions
+        setHasOptionsMenu(true)
 
         // Detect if a new story is required
-        isNewStory = args.storyId.isEmpty()
+        newStoryRequired = args.story == null
     }
 
     override fun onCreateView(
@@ -57,13 +57,16 @@ class StoryLogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // SETUP
 
-        if (isNewStory) {
+        if (newStoryRequired) {
             // new story required
-            viewModel.createNewStory(args.coAuthor)
+            viewModel.createNewStory(args.coAuthorId!!)
         } else {
             // existing story can be shown
-            viewModel.updateStoryId(args.storyId)
-            viewModel.listenForChangesToStory()
+            args.story?.let { story ->
+                isDone = story.authorsDone.contains(Hiya.userId)
+                viewModel.updateStoryId(story.id)
+                viewModel.listenForChangesToStory()
+            }
         }
 
         // VIEW LISTENERS
@@ -106,7 +109,8 @@ class StoryLogFragment : Fragment() {
         // listen for when a new word has been added
         viewModel.addNewWordStatus.observe(viewLifecycleOwner, Observer { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {}
+                QueryStatus.PENDING -> {
+                }
                 QueryStatus.SUCCESS -> {
                     Toast.makeText(requireActivity(), "Successfully added word!", Toast.LENGTH_SHORT).show()
                 }
@@ -118,8 +122,10 @@ class StoryLogFragment : Fragment() {
         // listen for when a new story is created
         viewModel.createNewStoryStatus.observe(viewLifecycleOwner, Observer { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {}
-                QueryStatus.SUCCESS -> {}
+                QueryStatus.PENDING -> {
+                }
+                QueryStatus.SUCCESS -> {
+                }
                 QueryStatus.ERROR -> {
                     Toast.makeText(requireActivity(), "Failed to create a new story - ${response.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -127,6 +133,45 @@ class StoryLogFragment : Fragment() {
         })
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.story_log_menu, menu)
+
+        // set drawable for done icon
+        if (isDone) {
+            menu.findItem(R.id.action_done).setIcon(R.drawable.ic_done_filled)
+        } else {
+            menu.findItem(R.id.action_done).setIcon(R.drawable.ic_done_open)
+        }
+
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_done -> {
+                Log.d(TAG, "onOptionsItemSelected: done clicked")
+                isDone = if (isDone) {
+                    viewModel.removeAuthorFromDoneList()
+                    item.setIcon(R.drawable.ic_done_open)
+                    false
+                } else {
+                    viewModel.addAuthorToDoneList()
+                    item.setIcon(R.drawable.ic_done_filled)
+                    true
+                }
+                true
+            }
+            R.id.action_settings -> {
+                Log.d(TAG, "onOptionsItemSelected: settings clicked")
+                findNavController().navigate(StoryLogFragmentDirections.actionStoryLogFragmentToEditStoryDetailsFragment())
+                viewModel.removeAuthorFromDoneList()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -161,6 +206,7 @@ class StoryLogFragment : Fragment() {
         super.onPause()
         Log.d(LC_TAG, "log onPause: called")
     }
+
 
 
 

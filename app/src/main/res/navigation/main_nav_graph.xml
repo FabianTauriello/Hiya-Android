@@ -5,11 +5,11 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/storyListFragment">
     <dialog
-        android:id="@+id/userSelectionDialog"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserSelectionDialog"
+        android:id="@+id/userListDialog"
+        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserListDialog"
         android:label="Select a contact">
         <action
-            android:id="@+id/action_userSelectionDialog_to_StoryLogFragment"
+            android:id="@+id/action_userListDialog_to_StoryLogFragment"
             app:destination="@id/storyLogNestedGraph" />
     </dialog>
     <fragment
@@ -18,8 +18,8 @@
         android:label="In Progress"
         tools:layout="@layout/fragment_story_list">
         <action
-            android:id="@+id/action_storyListFragment_to_userSelectionDialog"
-            app:destination="@id/userSelectionDialog" />
+            android:id="@+id/action_storyListFragment_to_userListDialog"
+            app:destination="@id/userListDialog" />
         <action
             android:id="@+id/action_storyListFragment_to_StoryLogFragment"
             app:destination="@id/storyLogNestedGraph" />
@@ -27,37 +27,38 @@
     <navigation android:id="@+id/storyLogNestedGraph"
         app:startDestination="@id/storyLogFragment">
         <argument
-            android:name="coAuthor"
-            app:argType="io.github.fabiantauriello.hiya.domain.Author" />
-        <argument
-            android:name="storyId"
-            android:defaultValue=""
+            android:name="coAuthorId"
+            app:nullable="true"
             app:argType="string" />
+        <argument
+            android:name="story"
+            app:argType="io.github.fabiantauriello.hiya.domain.Story"
+            app:nullable="true" />
         <fragment
             android:id="@+id/storyLogFragment"
             android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryLogFragment"
             android:label="Story Log"
             tools:layout="@layout/fragment_story_log">
             <argument
-                android:name="coAuthor"
-                app:argType="io.github.fabiantauriello.hiya.domain.Author" />
+                android:name="coAuthorId"
+                app:argType="string"
+                app:nullable="true" />
             <argument
-                android:name="storyId"
-                android:defaultValue=""
-                app:argType="string" />
+                android:name="story"
+                app:argType="io.github.fabiantauriello.hiya.domain.Story"
+                app:nullable="true" />
             <action
                 android:id="@+id/action_storyLogFragment_to_fullScreenStoryFragment"
                 app:destination="@id/fullScreenStoryFragment" />
+            <action
+                android:id="@+id/action_storyLogFragment_to_editStoryDetailsFragment"
+                app:destination="@id/editStoryDetailsFragment" />
         </fragment>
         <fragment
             android:id="@+id/fullScreenStoryFragment"
             android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.FullScreenStoryFragment"
             android:label="Full Screen"
-            tools:layout="@layout/fragment_full_screen_story">
-            <action
-                android:id="@+id/action_fullScreenStoryFragment_to_editStoryDetailsFragment"
-                app:destination="@id/editStoryDetailsFragment" />
-        </fragment>
+            tools:layout="@layout/fragment_full_screen_story"/>
         <fragment
             android:id="@+id/editStoryDetailsFragment"
             android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.EditStoryDetailsFragment"

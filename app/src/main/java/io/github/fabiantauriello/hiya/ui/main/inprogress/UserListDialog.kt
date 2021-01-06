@@ -9,25 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.databinding.UserSelectionDialogBinding
-import io.github.fabiantauriello.hiya.domain.Author
+import io.github.fabiantauriello.hiya.databinding.UserListDialogBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.User
-import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
+import io.github.fabiantauriello.hiya.viewmodels.UserListViewModel
 
 
-class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
+class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
 
     private val TAG = this::class.java.name
 
-    private lateinit var binding: UserSelectionDialogBinding
+    private lateinit var binding: UserListDialogBinding
 
-    private val viewModel: InProgressActivityViewModel by activityViewModels()
+    private val viewModel: UserListViewModel by activityViewModels()
 
     private lateinit var adapter: UserListAdapter
 
@@ -41,7 +40,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = UserSelectionDialogBinding.inflate(inflater, container, false)
+        binding = UserListDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -98,9 +97,7 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
                 }
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
-                    // Show user list title
                     binding.tvUserSelectionTitle.visibility = View.VISIBLE
-                    // Show user list layout
                     binding.layoutUserList.visibility = View.VISIBLE
                 }
                 QueryStatus.ERROR -> {
@@ -113,8 +110,8 @@ class UserSelectionDialog : BottomSheetDialogFragment(), UserClickListener {
     // create new story with given contact
     override fun onUserClick(contact: User) {
         Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
-        val action = UserSelectionDialogDirections.actionUserSelectionDialogToStoryLogFragment(
-            Author(contact.id, false)
+        val action = UserListDialogDirections.actionUserListDialogToStoryLogFragment(
+            contact.id, null
         )
         findNavController().navigate(action)
     }

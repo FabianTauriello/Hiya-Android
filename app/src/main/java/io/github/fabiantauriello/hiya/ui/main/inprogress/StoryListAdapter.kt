@@ -8,11 +8,11 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.StoryListItemBinding
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
-import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 
 class StoryListAdapter(
     private val stories: ArrayList<Story>,
-    private val viewModel: InProgressActivityViewModel,
+    private val viewModel: StoryListViewModel,
     private val listener: StoryListItemClickListener
 ) : RecyclerView.Adapter<StoryListAdapter.StoryItemViewHolder>() {
 

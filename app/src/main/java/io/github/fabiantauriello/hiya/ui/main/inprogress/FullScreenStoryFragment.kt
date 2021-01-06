@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import io.github.fabiantauriello.hiya.R
@@ -24,6 +25,10 @@ class FullScreenStoryFragment : Fragment() {
 
     private val viewModel: StoryLogViewModel by navGraphViewModels(R.id.storyLogNestedGraph)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,21 +38,8 @@ class FullScreenStoryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // SETUP
-
         // initialize story text view
         binding.tvStoryFull.text = viewModel.storyLogText.value
-
-        // VIEW LISTENERS
-
-        binding.toggleDone.setOnCheckedChangeListener { _, isComplete ->
-            Log.d(TAG, "onViewCreated: $isComplete")
-            viewModel.changeIsDoneFlag(isComplete)
-        }
-        binding.fabEditDetails.setOnClickListener {
-            findNavController().navigate(FullScreenStoryFragmentDirections.actionFullScreenStoryFragmentToEditStoryDetailsFragment())
-        }
-
     }
 
     override fun onAttach(context: Context) {
@@ -58,15 +50,11 @@ class FullScreenStoryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(LC_TAG, "full onResume: called")
-        // hide action bar
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(LC_TAG, "full onDestroy: called $id")
-        // show action bar
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDetach() {

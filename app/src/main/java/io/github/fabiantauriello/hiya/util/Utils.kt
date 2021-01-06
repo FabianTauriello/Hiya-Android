@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.Story
 import java.util.*
 
@@ -37,10 +36,6 @@ object Utils {
         }
     }
 
-    fun getCoAuthorForStory(story: Story): Author {
-//        return story.authors.filter { it.userId != Hiya.userId }[0]
-        return Author("", false)
-    }
 
 
 }

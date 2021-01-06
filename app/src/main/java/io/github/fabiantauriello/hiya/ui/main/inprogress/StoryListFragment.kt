@@ -8,15 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.util.Utils
-import io.github.fabiantauriello.hiya.viewmodels.InProgressActivityViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 
 // chat rooms
 class StoryListFragment : Fragment(), StoryListItemClickListener {
@@ -26,7 +24,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
     private lateinit var binding: FragmentStoryListBinding
 
-    private val viewModel: InProgressActivityViewModel by activityViewModels()
+    private val viewModel: StoryListViewModel by activityViewModels()
 
     private lateinit var adapter: StoryListAdapter
 
@@ -54,7 +52,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
         binding.fabSelectUser.setOnClickListener {
             if (findNavController().currentDestination?.id == R.id.storyListFragment) {
-                findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserSelectionDialog())
+                findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserListDialog())
             }
         }
 
@@ -84,6 +82,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
     }
 
+
     override fun onStoryClick(story: Story) {
         /*
         Check if the current destination matches this fragment because multiple quick taps of
@@ -93,7 +92,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         if (findNavController().currentDestination?.id == R.id.storyListFragment) {
             findNavController().navigate(
                 StoryListFragmentDirections.actionStoryListFragmentToStoryLogFragment(
-                    Utils.getCoAuthorForStory(story), story.id
+                    null, story
                 )
             )
         }

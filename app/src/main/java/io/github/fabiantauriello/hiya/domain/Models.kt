@@ -19,16 +19,12 @@ data class Story(
     var id: String = "",
     var title: String = "",
     var text: String = "",
-    val lastUpdateTimestamp: String = "",
+    var lastUpdateTimestamp: String = "",
     val finished: Boolean = false,
-    val wordCount: Int = 0,
-    val authorIds: ArrayList<String> = arrayListOf()
-) : Parcelable
-
-@Parcelize
-data class Author(
-    val userId: String = "",
-    var isDone: Boolean = false
+    var wordCount: Int = 0,
+    val authors: ArrayList<String> = arrayListOf(),
+    val authorsLiked: ArrayList<String> = arrayListOf(),
+    val authorsDone: ArrayList<String> = arrayListOf()
 ) : Parcelable
 
 // Use this for when you want to know the status of a Firebase query WITH the data.
