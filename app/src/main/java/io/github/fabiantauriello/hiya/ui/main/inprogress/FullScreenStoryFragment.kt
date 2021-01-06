@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentFullScreenStoryBinding
@@ -39,7 +36,7 @@ class FullScreenStoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // initialize story text view
-        binding.tvStoryFull.text = viewModel.storyLogText.value
+        binding.tvStoryFull.text = viewModel.story.value?.data?.text
     }
 
     override fun onAttach(context: Context) {

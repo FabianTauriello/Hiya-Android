@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
@@ -59,8 +58,8 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
         // OBSERVERS
 
-        // observe story list live data to populate rv
-        viewModel.storyListResponse.observe(viewLifecycleOwner, Observer { response ->
+        // observe story list live data
+        viewModel.storyListResponse.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
                 QueryStatus.PENDING -> {
                 }
@@ -78,7 +77,8 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
                 }
             }
         })
-        viewModel.userStoryPairResponse.observe(viewLifecycleOwner, Observer { response ->
+        // observe user-story response to populate rv
+        viewModel.userStoryPairResponse.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
                 QueryStatus.SUCCESS -> {
                     adapter.addItem(response.data!!)

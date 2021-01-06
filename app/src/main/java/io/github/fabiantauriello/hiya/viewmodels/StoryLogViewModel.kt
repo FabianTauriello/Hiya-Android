@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.getField
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.*
@@ -28,14 +27,9 @@ class StoryLogViewModel : ViewModel() {
     val createNewStoryStatus: LiveData<FirestoreResponseWithoutData>
         get() = _createNewStoryStatus
 
-    private val _storyLogText = MutableLiveData("")
-    val storyLogText: LiveData<String>
-        get() = _storyLogText
-
-//    private var _isDone = MutableLiveData(false)
-//    val isDone: LiveData<Boolean>
-//        get() = _isDone
-
+    private val _story = MutableLiveData<FirestoreResponse<Story>>()
+    val story: LiveData<FirestoreResponse<Story>>
+        get() = _story
 
     // listen to one story document for changes. called once at beginning and then again with each change
     // THIS SHOULD ONLY BE CALLED ONCE! And everything else should just listen to the changes made (e.g storyText)
@@ -48,8 +42,8 @@ class StoryLogViewModel : ViewModel() {
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    // update text LiveData
-                    _storyLogText.value = snapshot.getString("text")!!
+                    val story = snapshot.toObject(Story::class.java)!!
+                    _story.value = FirestoreResponse.success(story)
                 } else {
                     Log.d(TAG, "Current data: null")
                 }

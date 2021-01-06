@@ -10,7 +10,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
@@ -74,6 +73,7 @@ class StoryLogFragment : Fragment() {
         binding.btnAddToStory.setOnClickListener {
             val text = binding.etNewWord.text.toString().trim()
             binding.etNewWord.text.clear()
+            binding.etNewWord.isEnabled = false
             binding.btnAddToStory.isEnabled = false
             viewModel.addNewWord(text)
         }
@@ -101,13 +101,22 @@ class StoryLogFragment : Fragment() {
 
         // OBSERVERS
 
-        // listen for story text changes
-        viewModel.storyLogText.observe(viewLifecycleOwner, Observer { text ->
-            binding.tvStoryLog.text = text
-            binding.tvStoryLog.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+        // listen for story changes
+        viewModel.story.observe(viewLifecycleOwner, { response ->
+            Log.d(TAG, "onViewCreated: new text")
+            when (response.queryStatus) {
+                QueryStatus.SUCCESS -> {
+                    binding.etNewWord.isEnabled = response.data?.nextTurn == Hiya.userId
+                    binding.tvStoryLog.text = response.data?.text
+                    binding.tvStoryLog.visibility = if (response.data?.text.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+                QueryStatus.PENDING -> {}
+                QueryStatus.ERROR -> {}
+            }
+
         })
         // listen for when a new word has been added
-        viewModel.addNewWordStatus.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.addNewWordStatus.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
                 QueryStatus.PENDING -> {
                 }
@@ -120,7 +129,7 @@ class StoryLogFragment : Fragment() {
             }
         })
         // listen for when a new story is created
-        viewModel.createNewStoryStatus.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.createNewStoryStatus.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
                 QueryStatus.PENDING -> {
                 }
