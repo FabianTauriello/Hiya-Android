@@ -91,9 +91,6 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
         // Observe users live data to populate rv
         viewModel.userListResponse.observe(viewLifecycleOwner, Observer { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {
-                    Log.d(TAG, "observeUsersResponse: pending")
-                }
                 QueryStatus.SUCCESS -> {
                     adapter.update(response.data!!)
                     showUserListTitle()
@@ -122,7 +119,7 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
     override fun onUserClick(contact: User) {
         Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
         val action = UserListDialogDirections.actionUserListDialogToStoryLogFragment(
-            contact.id, null
+            contact, null
         )
         findNavController().navigate(action)
     }

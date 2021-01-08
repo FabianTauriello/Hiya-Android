@@ -21,7 +21,6 @@
         android:id="@+id/rvInProgressStories"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +35,6 @@
         android:layout_marginBottom="24dp"
         android:clickable="true"
         android:src="@drawable/ic_new_message"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

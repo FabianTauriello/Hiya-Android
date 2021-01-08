@@ -17,6 +17,7 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryLogBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
+import io.github.fabiantauriello.hiya.util.Utils
 import io.github.fabiantauriello.hiya.viewmodels.StoryLogViewModel
 
 
@@ -56,13 +57,15 @@ class StoryLogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // SETUP
 
+        binding.tvStoryLog.visibility = if (args.story?.text.isNullOrEmpty()) View.GONE else View.VISIBLE
+
         if (newStoryRequired) {
             // new story required
-            viewModel.createNewStory(args.coAuthorId!!)
+            viewModel.createNewStory(args.coAuthor!!)
         } else {
             // existing story can be shown
             args.story?.let { story ->
-                isDone = story.authorsDone.contains(Hiya.userId)
+                isDone = Utils.getAuthorFromStory(story, Hiya.userId).done
                 viewModel.updateStoryId(story.id)
                 viewModel.listenForChangesToStory()
             }
@@ -110,7 +113,6 @@ class StoryLogFragment : Fragment() {
                     binding.tvStoryLog.text = response.data?.text
                     binding.tvStoryLog.visibility = if (response.data?.text.isNullOrEmpty()) View.GONE else View.VISIBLE
                 }
-                QueryStatus.PENDING -> {}
                 QueryStatus.ERROR -> {}
             }
 
@@ -118,8 +120,6 @@ class StoryLogFragment : Fragment() {
         // listen for when a new word has been added
         viewModel.addNewWordStatus.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {
-                }
                 QueryStatus.SUCCESS -> {
                     Toast.makeText(requireActivity(), "Successfully added word!", Toast.LENGTH_SHORT).show()
                 }
@@ -131,8 +131,6 @@ class StoryLogFragment : Fragment() {
         // listen for when a new story is created
         viewModel.createNewStoryStatus.observe(viewLifecycleOwner, { response ->
             when (response.queryStatus) {
-                QueryStatus.PENDING -> {
-                }
                 QueryStatus.SUCCESS -> {
                 }
                 QueryStatus.ERROR -> {

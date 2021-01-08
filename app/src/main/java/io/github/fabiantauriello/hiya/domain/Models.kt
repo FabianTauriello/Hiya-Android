@@ -15,6 +15,7 @@ data class User(
     val profileImageUri: String = ""
 ) : Parcelable
 
+// TODO consider abstracting author information into separate collection. will work with group stories better
 @Parcelize
 data class Story(
     var id: String = "",
@@ -24,9 +25,17 @@ data class Story(
     val finished: Boolean = false,
     var wordCount: Int = 0,
     var nextTurn: String = "",
-    val authors: ArrayList<String> = arrayListOf(),
-    val authorsLiked: ArrayList<String> = arrayListOf(),
-    val authorsDone: ArrayList<String> = arrayListOf()
+    val authorIds: ArrayList<String> = arrayListOf(),
+    val authors: ArrayList<Author> = arrayListOf()
+) : Parcelable
+
+@Parcelize
+data class Author(
+    val id: String = "",
+    val name: String = "",
+    val picture: String = "",
+    val liked: Boolean = false,
+    val done: Boolean = false
 ) : Parcelable
 
 // Use this for when you want to know the status of a Firebase query WITH the data.
@@ -35,13 +44,8 @@ data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val 
         fun <T> success(data: T): FirestoreResponse<T> {
             return FirestoreResponse(QueryStatus.SUCCESS, data, null)
         }
-
         fun <T> error(msg: String): FirestoreResponse<T> {
             return FirestoreResponse(QueryStatus.ERROR,  null, msg)
-        }
-
-        fun <T> loading(): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.PENDING, null, null)
         }
     }
 }
@@ -52,45 +56,13 @@ data class FirestoreResponseWithoutData(var queryStatus: QueryStatus, val messag
         fun success(): FirestoreResponseWithoutData {
             return FirestoreResponseWithoutData(QueryStatus.SUCCESS, null)
         }
-
         fun error(msg: String): FirestoreResponseWithoutData {
             return FirestoreResponseWithoutData(QueryStatus.ERROR,  msg)
-        }
-
-        fun loading(): FirestoreResponseWithoutData {
-            return FirestoreResponseWithoutData(QueryStatus.PENDING, null)
         }
     }
 }
 
 enum class QueryStatus {
-    PENDING,
     SUCCESS,
     ERROR
-}
-
-/**
- * Used as a wrapper for data that is exposed via a LiveData that represents an event.
- */
-open class Event<out T>(private val content: T) {
-
-    var hasBeenHandled = false
-        private set // Allow external read but not write
-
-    /**
-     * Returns the content and prevents its use again.
-     */
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) {
-            null
-        } else {
-            hasBeenHandled = true
-            content
-        }
-    }
-
-    /**
-     * Returns the content, even if it's already been handled.
-     */
-    fun peekContent(): T = content
 }

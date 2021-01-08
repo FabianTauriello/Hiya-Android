@@ -51,23 +51,42 @@ class StoryLogViewModel : ViewModel() {
     }
 
     fun addAuthorToDoneList() {
-        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            .update("authorsDone", FieldValue.arrayUnion(Hiya.userId))
+        db.runBatch {
+            val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = false)))
+            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = true)))
+        }
     }
 
     fun removeAuthorFromDoneList() {
-        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            .update("authorsDone", FieldValue.arrayRemove(Hiya.userId))
+        db.runBatch {
+            val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = true)))
+            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = false)))
+        }
     }
 
-    fun createNewStory(coAuthorId: String) {
+    fun createNewStory(coAuthor: User) {
         // Initialize Firebase refs
         val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document()
 
         // Build new story
         val newStoryId = storyRef.id
         val newTimestamp = System.currentTimeMillis().toString()
-        val newStory = Story(newStoryId, "", "", newTimestamp, false, 0, Hiya.userId, arrayListOf(Hiya.userId, coAuthorId))
+        val newStory = Story(
+            id = newStoryId,
+            title ="",
+            text ="",
+            lastUpdateTimestamp = newTimestamp,
+            finished = false,
+            wordCount = 0,
+            nextTurn = Hiya.userId,
+            authorIds = arrayListOf(Hiya.userId, coAuthor.id),
+            authors = arrayListOf(
+                Author(id = Hiya.userId, name = Hiya.name, picture = Hiya.profileImageUri, liked = false, done = false),
+                Author(id = coAuthor.id, name = coAuthor.name, picture = coAuthor.profileImageUri, liked = false, done = false)
+            )
+        )
 
         // Add new story doc
         storyRef.set(newStory)
@@ -84,11 +103,11 @@ class StoryLogViewModel : ViewModel() {
 
     fun addNewWord(newWord: String) {
         db.runTransaction { transaction ->
-            val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId) // TODO change "stories" path string to use constant
+            val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
             val snapshot = transaction.get(storyRef)
 
             val timestamp = System.currentTimeMillis().toString()
-            val coAuthorId = Utils.getCoAuthor(snapshot.toObject(Story::class.java)!!)
+            val coAuthorId = Utils.getCoAuthorFromStory(snapshot.toObject(Story::class.java)!!).id
             val newWordCount = snapshot.getDouble("wordCount")!! + 1
             var newText = snapshot.getString("text")!!
             if (newText.isNotEmpty()) {

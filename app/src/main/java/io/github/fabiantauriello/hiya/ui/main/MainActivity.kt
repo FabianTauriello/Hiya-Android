@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.storyLogFragment ->  {
                     hideNavBar()
+                    showToolbar()
                 }
                 else -> {
                     showNavBar()
