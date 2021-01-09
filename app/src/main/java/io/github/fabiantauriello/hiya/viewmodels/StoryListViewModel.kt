@@ -4,18 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.Author
-import io.github.fabiantauriello.hiya.domain.FirestoreResponse
 import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.util.Utils
 import kotlinx.android.synthetic.main.fragment_story_log.view.*
-import kotlinx.coroutines.tasks.await
 
 class StoryListViewModel : ViewModel() {
 
@@ -23,9 +19,13 @@ class StoryListViewModel : ViewModel() {
 
     private val db = Firebase.firestore
 
-    private val _userStoryPairResponse = MutableLiveData<ArrayList<Pair<Story, Author>>>()
-    val userStoryPairResponse: LiveData<ArrayList<Pair<Story, Author>>>
-        get() = _userStoryPairResponse
+    private val _inProgressStoryList = MutableLiveData<ArrayList<Pair<Story, Author>>>()
+    val inProgressStoryList: LiveData<ArrayList<Pair<Story, Author>>>
+        get() = _inProgressStoryList
+
+    private val _finishedStoryList = MutableLiveData<ArrayList<Pair<Story, Author>>>()
+    val finishedStoryList: LiveData<ArrayList<Pair<Story, Author>>>
+        get() = _finishedStoryList
 
     // listens to multiple documents
     fun listenForStories() {
@@ -40,13 +40,25 @@ class StoryListViewModel : ViewModel() {
                 return@addSnapshotListener
             }
 
-            val resultList = arrayListOf<Pair<Story, Author>>()
+            val inProgressTempList = arrayListOf<Pair<Story, Author>>()
+            val completedTempList = arrayListOf<Pair<Story, Author>>()
+
             for (doc in snapshot?.documents!!) {
                 val story = doc.toObject(Story::class.java)!!
                 val author = Utils.getCoAuthorFromStory(story)
-                resultList.add(Pair(story, author))
+
+                // check if story is now finished (if all authors have marked story as done)
+                val storyIsFinished = story.authors.all { it.done }
+
+                // Update temp lists for livedata
+                if (storyIsFinished) {
+                    completedTempList.add(Pair(story, author))
+                } else {
+                    inProgressTempList.add(Pair(story, author))
+                }
             }
-            _userStoryPairResponse.value = resultList
+            _inProgressStoryList.value = inProgressTempList
+            _finishedStoryList.value = completedTempList
         }
     }
 

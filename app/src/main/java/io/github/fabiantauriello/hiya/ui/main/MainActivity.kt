@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
         Hiya.userId = sharedPreferences.getString(Hiya.SHARED_PREFS_USER_ID, "") ?: ""
         Hiya.name = sharedPreferences.getString(Hiya.SHARED_PREFS_USERNAME, "") ?: ""
-        Hiya.profileImageUri = sharedPreferences.getString(Hiya.SHARED_PREFS_PROFILE_IMAGE_URI, "") ?: ""
+        Hiya.profilePic = sharedPreferences.getString(Hiya.SHARED_PREFS_PROFILE_PIC_URI, "") ?: ""
 
         val navController = findNavController(R.id.navHostFragment)
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         // configure action bar
         val appBarConfiguration = AppBarConfiguration.Builder(
             R.id.storyListFragment,
-            R.id.completedStoriesFragment,
+            R.id.finishedStoriesFragment,
             R.id.settingsFragment
         ).build()
 

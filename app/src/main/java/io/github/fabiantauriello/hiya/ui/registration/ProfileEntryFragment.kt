@@ -3,7 +3,6 @@ package io.github.fabiantauriello.hiya.ui.registration
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -145,13 +144,13 @@ class ProfileEntryFragment : Fragment() {
         requireActivity().finish()
     }
 
-    private fun saveProfileDataToSharedPrefs(userId: String, username: String, profileImageUri: String) {
+    private fun saveProfileDataToSharedPrefs(userId: String, username: String, profilePic: String) {
         val sharedPreferences = requireActivity().getSharedPreferences(Hiya.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         editor.putString(Hiya.SHARED_PREFS_USER_ID, userId)
         editor.putString(Hiya.SHARED_PREFS_USERNAME, username)
-        editor.putString(Hiya.SHARED_PREFS_PROFILE_IMAGE_URI, profileImageUri)
+        editor.putString(Hiya.SHARED_PREFS_PROFILE_PIC_URI, profilePic)
         editor.putStringSet("stories", mutableSetOf("s", ""))
         editor.apply()
     }

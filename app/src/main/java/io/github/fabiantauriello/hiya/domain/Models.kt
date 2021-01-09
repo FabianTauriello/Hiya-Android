@@ -12,7 +12,7 @@ data class User(
     // saved for this contact on the user's phone TODO WHAT??
     val name: String = "",
     val phoneNumber: String = "",
-    val profileImageUri: String = ""
+    val profilePic: String = ""
 ) : Parcelable
 
 // TODO consider abstracting author information into separate collection. will work with group stories better
@@ -22,7 +22,6 @@ data class Story(
     var title: String = "",
     var text: String = "",
     var lastUpdateTimestamp: String = "",
-    val finished: Boolean = false,
     var wordCount: Int = 0,
     var nextTurn: String = "",
     val authorIds: ArrayList<String> = arrayListOf(),

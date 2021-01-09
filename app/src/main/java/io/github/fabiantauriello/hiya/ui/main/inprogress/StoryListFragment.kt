@@ -9,16 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
-import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
-import io.github.fabiantauriello.hiya.domain.Author
-import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.domain.User
-import io.github.fabiantauriello.hiya.util.Utils
 import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 
 // chat rooms
@@ -30,11 +23,11 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
 
     private val viewModel: StoryListViewModel by activityViewModels()
 
-    private lateinit var adapter: StoryListAdapter
+    private lateinit var adapter: InProgressStoryListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = StoryListAdapter(arrayListOf(), this)
+        adapter = InProgressStoryListAdapter(arrayListOf(), this)
     }
 
     override fun onCreateView(
@@ -71,28 +64,13 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         // OBSERVERS
 
         // observe user-story response to populate rv
-        viewModel.userStoryPairResponse.observe(viewLifecycleOwner, { list ->
+        viewModel.inProgressStoryList.observe(viewLifecycleOwner, { list ->
             adapter.updateList(list)
             hideProgressBar()
             showFab()
             showRecyclerView()
         })
 
-//        val ref = Firebase.firestore.collection("stories").document()
-//        ref.set(Story(
-//            ref.id,
-//            "story title",
-//            "once upon a time",
-//            System.currentTimeMillis().toString(),
-//            false,
-//            4,
-//            nextTurn = Hiya.userId,
-//            authorIds = arrayListOf("YY4TIEm4G59uSfBX8ZVX", "yLcVVkVEKMbjLrCm4UaM"),
-//            authors = arrayListOf(
-//                Author("YY4TIEm4G59uSfBX8ZVX", "Fabian", "https://firebasestorage.googleapis.com/v0/b/hiya-57ff9.appspot.com/o/images%2F15120231-213d-4217-b7ee-eed6ed2653db?alt=media&token=1a68a451-73a8-4f49-9775-dd672863b99d", liked = false, done = false),
-//                Author("yLcVVkVEKMbjLrCm4UaM", "Lisa Simpson", "https://firebasestorage.googleapis.com/v0/b/hiya-57ff9.appspot.com/o/images%2FLisa_Simpson_official.png?alt=media&token=f0371dec-c61d-4741-b3bd-c1b2f30d407f", false, false)
-//            )
-//        ))
     }
 
     private fun hideRecyclerView() {

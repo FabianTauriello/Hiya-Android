@@ -2,7 +2,6 @@ package io.github.fabiantauriello.hiya.ui.main.inprogress
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,13 +10,12 @@ import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.StoryListItemBinding
 import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.domain.User
 import io.github.fabiantauriello.hiya.util.Utils
 
-class StoryListAdapter(
+class InProgressStoryListAdapter(
     private var stories: ArrayList<Pair<Story, Author>>,
     private val listener: StoryListItemClickListener
-) : RecyclerView.Adapter<StoryListAdapter.StoryItemViewHolder>() {
+) : RecyclerView.Adapter<InProgressStoryListAdapter.StoryItemViewHolder>() {
 
     private val TAG = this::class.java.name
 

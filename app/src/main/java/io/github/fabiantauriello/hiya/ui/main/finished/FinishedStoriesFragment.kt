@@ -1,4 +1,4 @@
-package io.github.fabiantauriello.hiya.ui.main.completed
+package io.github.fabiantauriello.hiya.ui.main.finished
 
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import io.github.fabiantauriello.hiya.R
 
-class CompletedStoriesFragment : Fragment() {
+class FinishedStoriesFragment : Fragment() {
 
     private val TAG = this::class.java.name
 
@@ -20,7 +20,7 @@ class CompletedStoriesFragment : Fragment() {
         Log.d(TAG, "onCreateView: called")
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_completed_stories, container, false)
+        return inflater.inflate(R.layout.fragment_finished_stories, container, false)
     }
 
 }

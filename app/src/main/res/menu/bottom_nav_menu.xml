@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_chats"
         android:title="In Progress"/>
     <item
-        android:id="@+id/completedStoriesFragment"
+        android:id="@+id/finishedStoriesFragment"
         android:enabled="true"
         android:icon="@drawable/ic_book"
-        android:title="Completed"/>
+        android:title="Finished"/>
     <item
         android:id="@+id/likedFragment"
         android:enabled="true"

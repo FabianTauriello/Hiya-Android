@@ -16,7 +16,7 @@ class Hiya : Application() {
         const val SHARED_PREFS = "sharedPrefs"
         const val SHARED_PREFS_USERNAME = "username"
         const val SHARED_PREFS_USER_ID = "userId"
-        const val SHARED_PREFS_PROFILE_IMAGE_URI = "profileImageUri"
+        const val SHARED_PREFS_PROFILE_PIC_URI = "profileImageUri"
 
         // permission codes
         const val CONTACTS_PERMISSION_REQUEST_CODE = 1
@@ -32,7 +32,7 @@ class Hiya : Application() {
         // TODO consider rethinking how these values are stored. Should they be nullable instead??
         var userId = ""
         var name = ""
-        var profileImageUri = ""
+        var profilePic = ""
 
         private var instance: Hiya? = null
 

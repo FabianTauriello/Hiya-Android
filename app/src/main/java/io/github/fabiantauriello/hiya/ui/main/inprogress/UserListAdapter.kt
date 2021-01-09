@@ -8,7 +8,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.UserListItemBinding
-import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.domain.User
 
 class UserListAdapter(
@@ -45,7 +44,7 @@ class UserListAdapter(
 //            .override(450, 600)
             .error(R.drawable.ic_profile)
         Glide.with(holder.binding.ivContactPicture.context)
-            .load(user.profileImageUri)
+            .load(user.profilePic)
             .apply(options)
             .into(holder.binding.ivContactPicture)
 

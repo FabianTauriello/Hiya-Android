@@ -53,16 +53,16 @@ class StoryLogViewModel : ViewModel() {
     fun addAuthorToDoneList() {
         db.runBatch {
             val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = false)))
-            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = true)))
+            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
+            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
         }
     }
 
     fun removeAuthorFromDoneList() {
         db.runBatch {
             val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = true)))
-            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profileImageUri, liked = false, done = false)))
+            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
+            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
         }
     }
 
@@ -83,8 +83,8 @@ class StoryLogViewModel : ViewModel() {
             nextTurn = Hiya.userId,
             authorIds = arrayListOf(Hiya.userId, coAuthor.id),
             authors = arrayListOf(
-                Author(id = Hiya.userId, name = Hiya.name, picture = Hiya.profileImageUri, liked = false, done = false),
-                Author(id = coAuthor.id, name = coAuthor.name, picture = coAuthor.profileImageUri, liked = false, done = false)
+                Author(id = Hiya.userId, name = Hiya.name, picture = Hiya.profilePic, liked = false, done = false),
+                Author(id = coAuthor.id, name = coAuthor.name, picture = coAuthor.profilePic, liked = false, done = false)
             )
         )
 

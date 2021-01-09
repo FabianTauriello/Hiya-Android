@@ -16,7 +16,6 @@ import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.UserListDialogBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.User
-import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
 import io.github.fabiantauriello.hiya.viewmodels.UserListViewModel
 
 
@@ -117,7 +116,7 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
 
     // create new story with given contact
     override fun onUserClick(contact: User) {
-        Log.d(TAG, "onContactClick: ${contact.profileImageUri}")
+        Log.d(TAG, "onContactClick: ${contact.profilePic}")
         val action = UserListDialogDirections.actionUserListDialogToStoryLogFragment(
             contact, null
         )

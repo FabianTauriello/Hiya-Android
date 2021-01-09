@@ -65,9 +65,4 @@
             android:label="Edit Details"
             tools:layout="@layout/fragment_edit_story_details" />
     </navigation>
-    <fragment
-        android:id="@+id/completedStoriesFragment"
-        android:name="io.github.fabiantauriello.hiya.ui.main.completed.CompletedStoriesFragment"
-        android:label="fragment_completed_stories"
-        tools:layout="@layout/fragment_completed_stories" />
 </navigation>
