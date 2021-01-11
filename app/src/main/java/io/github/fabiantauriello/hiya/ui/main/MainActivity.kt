@@ -12,7 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.ActivityMainBinding
-import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel
 import io.github.fabiantauriello.hiya.viewmodels.UserListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     // activity ViewModels for storing story list and user list for lifecycle of activity
-    private val storyListViewModel: StoryListViewModel by viewModels()
+    private val storyListViewModel: StoriesViewModel by viewModels()
     private val userListViewModel: UserListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +46,10 @@ class MainActivity : AppCompatActivity() {
 
         // configure action bar
         val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.storyListFragment,
+            R.id.inProgressStoriesFragment,
             R.id.finishedStoriesFragment,
-            R.id.settingsFragment
+            R.id.likedStoriesFragment,
+            R.id.profileFragment
         ).build()
 
         setupActionBarWithNavController(navController, appBarConfiguration)

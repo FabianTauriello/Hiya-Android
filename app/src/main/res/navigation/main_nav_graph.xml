@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/storyListFragment">
+    app:startDestination="@id/inProgressStoriesFragment">
     <dialog
         android:id="@+id/userListDialog"
         android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserListDialog"
@@ -13,16 +13,16 @@
             app:destination="@id/storyLogNestedGraph" />
     </dialog>
     <fragment
-        android:id="@+id/storyListFragment"
-        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.StoryListFragment"
+        android:id="@+id/inProgressStoriesFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.InProgressStoriesFragment"
         android:label="In Progress"
-        tools:layout="@layout/fragment_story_list">
+        tools:layout="@layout/fragment_in_progress_stories">
         <action
-            android:id="@+id/action_storyListFragment_to_userListDialog"
-            app:destination="@id/userListDialog" />
-        <action
-            android:id="@+id/action_storyListFragment_to_StoryLogFragment"
+            android:id="@+id/action_inProgressStoriesFragment_to_StoryLogFragment"
             app:destination="@id/storyLogNestedGraph" />
+        <action
+            android:id="@+id/action_inProgressStoriesFragment_to_userListDialog"
+            app:destination="@id/userListDialog" />
     </fragment>
     <navigation android:id="@+id/storyLogNestedGraph"
         app:startDestination="@id/storyLogFragment">
@@ -65,4 +65,19 @@
             android:label="Edit Details"
             tools:layout="@layout/fragment_edit_story_details" />
     </navigation>
+    <fragment
+        android:id="@+id/finishedStoriesFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.finished.FinishedStoriesFragment"
+        android:label="Finished"
+        tools:layout="@layout/fragment_finished_stories" />
+    <fragment
+        android:id="@+id/likedStoriesFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.liked.LikedStoriesFragment"
+        android:label="Liked"
+        tools:layout="@layout/fragment_liked_stories" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="io.github.fabiantauriello.hiya.ui.main.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

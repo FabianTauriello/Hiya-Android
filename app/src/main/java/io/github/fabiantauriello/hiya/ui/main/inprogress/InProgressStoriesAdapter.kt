@@ -7,26 +7,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.github.fabiantauriello.hiya.R
-import io.github.fabiantauriello.hiya.databinding.StoryListItemBinding
-import io.github.fabiantauriello.hiya.domain.Author
+import io.github.fabiantauriello.hiya.databinding.InProgressListItemBinding
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
 
-class InProgressStoryListAdapter(
-    private var stories: ArrayList<Pair<Story, Author>>,
+class InProgressStoriesAdapter(
+    private var stories: ArrayList<Story>,
     private val listener: StoryListItemClickListener
-) : RecyclerView.Adapter<InProgressStoryListAdapter.StoryItemViewHolder>() {
+) : RecyclerView.Adapter<InProgressStoriesAdapter.StoryItemViewHolder>() {
 
     private val TAG = this::class.java.name
 
     class StoryItemViewHolder(
-        val binding: StoryListItemBinding
+        val binding: InProgressListItemBinding
     ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryItemViewHolder {
-        val binding = DataBindingUtil.inflate<StoryListItemBinding>(
+        val binding = DataBindingUtil.inflate<InProgressListItemBinding>(
             LayoutInflater.from(parent.context),
-            R.layout.story_list_item,
+            R.layout.in_progress_list_item,
             parent,
             false
         )
@@ -34,11 +33,11 @@ class InProgressStoryListAdapter(
     }
 
     override fun onBindViewHolder(holder: StoryItemViewHolder, position: Int) {
-        val story = stories[position].first
-        val author = stories[position].second
+        val story = stories[position]
+        val coAuthor = Utils.getCoAuthorFromStory(stories[position])
 
         // set list item properties
-        holder.binding.tvStoryTitle.text = author.name
+        holder.binding.tvStoryTitle.text = coAuthor.name
         holder.binding.tvStorySnippet.text = story.text
         holder.binding.tvLastUpdateTimestamp.text = Utils.formatTimestampToTime(story.lastUpdateTimestamp)
         holder.binding.tvWordCount.text = "${story.wordCount}" + if (story.wordCount == 1) " word" else " words"
@@ -46,34 +45,23 @@ class InProgressStoryListAdapter(
         // set image
         val options: RequestOptions = RequestOptions()
 //            .override(450, 600)
-            .error(R.drawable.ic_profile)
+            .error(R.drawable.ic_profile_filled)
         Glide.with(holder.binding.ivStoryPicture.context)
-            .load(author.picture)
+            .load(coAuthor.profilePic)
             .apply(options)
             .into(holder.binding.ivStoryPicture)
 
         // set click listener
-        holder.binding.layoutChatRoomItem.setOnClickListener {
+        holder.binding.layoutStoryItem.setOnClickListener {
             listener.onStoryClick(story)
         }
     }
 
     override fun getItemCount() = stories.size
 
-    fun clearList() {
-        stories.clear()
-        notifyDataSetChanged()
-    }
-
-    fun updateList(newList: ArrayList<Pair<Story, Author>>) {
+    fun updateList(newList: ArrayList<Story>) {
         stories.clear()
         stories = newList
         notifyDataSetChanged()
     }
-
-    fun getStories(): ArrayList<Pair<Story, Author>> {
-        return stories
-    }
-
-
 }

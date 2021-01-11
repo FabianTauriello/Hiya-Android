@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/storyListFragment"
+        android:id="@+id/inProgressStoriesFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_chats"
+        android:icon="@drawable/ic_in_prog_selector"
         android:title="In Progress"/>
     <item
         android:id="@+id/finishedStoriesFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_book"
+        android:icon="@drawable/ic_finished_selector"
         android:title="Finished"/>
     <item
-        android:id="@+id/likedFragment"
+        android:id="@+id/likedStoriesFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_like_filled"
+        android:icon="@drawable/ic_like_selector"
         android:title="Liked"/>
     <item
-        android:id="@+id/settingsFragment"
+        android:id="@+id/profileFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_profile"
+        android:icon="@drawable/ic_profile_selector"
         android:title="Profile"/>
 </menu>

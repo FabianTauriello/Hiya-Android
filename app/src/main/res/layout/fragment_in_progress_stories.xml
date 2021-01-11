@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.inprogress.StoryListFragment">
+    tools:context=".ui.main.inprogress.InProgressStoriesFragment">
 
     <ProgressBar
         android:id="@+id/pbLoadContacts"
@@ -33,9 +33,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        android:backgroundTint="?attr/colorPrimaryDark"
         android:clickable="true"
-        android:src="@drawable/ic_new_message"
+        android:src="@drawable/ic_new_story"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="?attr/colorOnPrimary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -148,7 +148,7 @@ class StoryLogFragment : Fragment() {
         if (isDone) {
             menu.findItem(R.id.action_done).setIcon(R.drawable.ic_done_filled)
         } else {
-            menu.findItem(R.id.action_done).setIcon(R.drawable.ic_done_open)
+            menu.findItem(R.id.action_done).setIcon(R.drawable.ic_done_outline)
         }
 
         return super.onCreateOptionsMenu(menu, inflater)
@@ -160,7 +160,7 @@ class StoryLogFragment : Fragment() {
                 Log.d(TAG, "onOptionsItemSelected: done clicked")
                 isDone = if (isDone) {
                     viewModel.removeAuthorFromDoneList()
-                    item.setIcon(R.drawable.ic_done_open)
+                    item.setIcon(R.drawable.ic_done_outline)
                     false
                 } else {
                     viewModel.addAuthorToDoneList()

@@ -78,13 +78,12 @@ class StoryLogViewModel : ViewModel() {
             title ="",
             text ="",
             lastUpdateTimestamp = newTimestamp,
-            finished = false,
             wordCount = 0,
             nextTurn = Hiya.userId,
             authorIds = arrayListOf(Hiya.userId, coAuthor.id),
             authors = arrayListOf(
-                Author(id = Hiya.userId, name = Hiya.name, picture = Hiya.profilePic, liked = false, done = false),
-                Author(id = coAuthor.id, name = coAuthor.name, picture = coAuthor.profilePic, liked = false, done = false)
+                Author(id = Hiya.userId, name = Hiya.name, profilePic = Hiya.profilePic, liked = false, done = false),
+                Author(id = coAuthor.id, name = coAuthor.name, profilePic = coAuthor.profilePic, liked = false, done = false)
             )
         )
 

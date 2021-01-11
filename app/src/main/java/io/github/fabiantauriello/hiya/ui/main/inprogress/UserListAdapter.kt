@@ -42,7 +42,7 @@ class UserListAdapter(
         // set image
         val options: RequestOptions = RequestOptions()
 //            .override(450, 600)
-            .error(R.drawable.ic_profile)
+            .error(R.drawable.ic_profile_filled)
         Glide.with(holder.binding.ivContactPicture.context)
             .load(user.profilePic)
             .apply(options)

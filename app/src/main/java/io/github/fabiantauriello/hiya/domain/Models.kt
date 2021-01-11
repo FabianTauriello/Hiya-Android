@@ -32,7 +32,7 @@ data class Story(
 data class Author(
     val id: String = "",
     val name: String = "",
-    val picture: String = "",
+    val profilePic: String = "",
     val liked: Boolean = false,
     val done: Boolean = false
 ) : Parcelable

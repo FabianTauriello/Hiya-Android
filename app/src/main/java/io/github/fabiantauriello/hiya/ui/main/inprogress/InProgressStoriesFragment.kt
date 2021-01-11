@@ -10,24 +10,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import io.github.fabiantauriello.hiya.R
-import io.github.fabiantauriello.hiya.databinding.FragmentStoryListBinding
+import io.github.fabiantauriello.hiya.databinding.FragmentInProgressStoriesBinding
 import io.github.fabiantauriello.hiya.domain.Story
-import io.github.fabiantauriello.hiya.viewmodels.StoryListViewModel
+import io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel
 
 // chat rooms
-class StoryListFragment : Fragment(), StoryListItemClickListener {
+class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
 
     private val TAG = this::class.java.name
 
-    private lateinit var binding: FragmentStoryListBinding
+    private lateinit var binding: FragmentInProgressStoriesBinding
 
-    private val viewModel: StoryListViewModel by activityViewModels()
+    private val viewModel: StoriesViewModel by activityViewModels()
 
-    private lateinit var adapter: InProgressStoryListAdapter
+    private lateinit var adapter: InProgressStoriesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = InProgressStoryListAdapter(arrayListOf(), this)
+        adapter = InProgressStoriesAdapter(arrayListOf(), this)
     }
 
     override fun onCreateView(
@@ -35,7 +35,7 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         Log.d(TAG, "onCreateView: called")
-        binding = FragmentStoryListBinding.inflate(inflater, container, false)
+        binding = FragmentInProgressStoriesBinding.inflate(inflater, container, false)
 
         // set default state of view before loading stories
         // TODO could put these in one function instead of three
@@ -51,21 +51,22 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         // SETUP
 
         viewModel.listenForStories()
-        binding.rvInProgressStories.adapter = adapter // TODO only assign adapter after updates
+        binding.rvInProgressStories.adapter = adapter
 
         // VIEW LISTENERS
 
         binding.fabSelectUser.setOnClickListener {
-            if (findNavController().currentDestination?.id == R.id.storyListFragment) {
-                findNavController().navigate(StoryListFragmentDirections.actionStoryListFragmentToUserListDialog())
+            if (findNavController().currentDestination?.id == R.id.inProgressStoriesFragment) {
+                findNavController().navigate(InProgressStoriesFragmentDirections.actionInProgressStoriesFragmentToUserListDialog())
             }
         }
 
         // OBSERVERS
 
-        // observe user-story response to populate rv
+        // observe in progress stories livedata and update rv
         viewModel.inProgressStoryList.observe(viewLifecycleOwner, { list ->
             adapter.updateList(list)
+            Log.d(TAG, "onViewCreated: updated")
             hideProgressBar()
             showFab()
             showRecyclerView()
@@ -103,9 +104,9 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
         navigation buttons can cause an exception. After committing to one navigation action,
         Android can accept another action before the first one is complete, causing the exception.
          */
-        if (findNavController().currentDestination?.id == R.id.storyListFragment) {
+        if (findNavController().currentDestination?.id == R.id.inProgressStoriesFragment) {
             findNavController().navigate(
-                StoryListFragmentDirections.actionStoryListFragmentToStoryLogFragment(
+                InProgressStoriesFragmentDirections.actionInProgressStoriesFragmentToStoryLogFragment(
                     null, story
                 )
             )
@@ -140,6 +141,8 @@ class StoryListFragment : Fragment(), StoryListItemClickListener {
     }
 
     override fun onPause() {
+        // Don't listen for updates to stories while user is in the log
+        viewModel.registration.remove()
         Log.d(TAG, "onPause: called")
         super.onPause()
     }
