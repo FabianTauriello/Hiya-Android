@@ -4,12 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
 import kotlinx.android.synthetic.main.fragment_story_log.view.*
@@ -32,45 +30,49 @@ class StoriesViewModel : ViewModel() {
     val likedStoryList: LiveData<ArrayList<Story>>
         get() = _likedStoryList
 
-    lateinit var registration: ListenerRegistration
+    // for in-progress stories fragment
+    fun listenForInProgressStories() {
+        Log.d(TAG, "listenForInProgressStories: called")
 
-    // listens to multiple documents.
-    // TODO check how many times this is called on updates (e.g. updating 'done' field). alternate way of doing this is separating functions
-    // for each list (in-progress, finished, liked) - e.g. .whereArrayContains("authorIds", Hiya.userId) AND .whereContains("done", true)
-    fun listenForStories() {
-        Log.d(TAG, "listenForStories: called")
-
-        val userStoriesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
-            .whereArrayContains("authorIds", Hiya.userId)
+        val storiesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
+            .whereArrayContains("authorIds", Hiya.userId).whereEqualTo("finished", false)
             .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
 
-        registration = userStoriesRef.addSnapshotListener { snapshot, error ->
+        storiesRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
-
             val inProgressTempList = arrayListOf<Story>()
-            val finishedTempList = arrayListOf<Story>()
-            val likedTempList = arrayListOf<Story>()
-
             for (doc in snapshot?.documents!!) {
                 val story = doc.toObject(Story::class.java)!!
-
-                // check if story is now finished (if all authors have marked story as done)
-                val storyIsFinished = story.authors.all { it.done }
-                val storyIsLiked = Utils.getAuthorFromStory(story, Hiya.userId).liked
-
-                // Update temp lists for livedata
-                if (storyIsFinished) {
-                    finishedTempList.add(story)
-                    if (storyIsLiked) {
-                        likedTempList.add(story)
-                    }
-                } else {
-                    inProgressTempList.add(story)
-                }
+                inProgressTempList.add(story)
             }
             _inProgressStoryList.value = inProgressTempList
+        }
+    }
+
+    // for finished stories fragment and liked stories fragment
+    fun listenForFinishedStories() {
+        Log.d(TAG, "listenForFinishedStories: called")
+
+        val storiesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
+            .whereArrayContains("authorIds", Hiya.userId).whereEqualTo("finished", true)
+            .orderBy("lastUpdateTimestamp", Query.Direction.DESCENDING)
+
+        storiesRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            val finishedTempList = arrayListOf<Story>()
+            val likedTempList = arrayListOf<Story>()
+            for (doc in snapshot?.documents!!) {
+                val story = doc.toObject(Story::class.java)!!
+                val storyIsLiked = Utils.getAuthorFromStory(story, Hiya.userId).liked
+                if (storyIsLiked) {
+                    likedTempList.add(story)
+                }
+                finishedTempList.add(story)
+            }
             _finishedStoryList.value = finishedTempList
             _likedStoryList.value = likedTempList
         }

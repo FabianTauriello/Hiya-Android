@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentInProgressStoriesBinding
 import io.github.fabiantauriello.hiya.domain.Story
@@ -50,7 +52,7 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
         Log.d(TAG, "onViewCreated: called")
         // SETUP
 
-        viewModel.listenForStories()
+        viewModel.listenForInProgressStories()
         binding.rvInProgressStories.adapter = adapter
 
         // VIEW LISTENERS
@@ -71,6 +73,9 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
             showFab()
             showRecyclerView()
         })
+
+        val s = Firebase.firestore.collection("stories").document("2KSsVIDkJ2Nwa3DwDZXw").collection("authors").document("EpTpbigrh2tzFQZcoqdB")
+        s.update("done", false)
 
     }
 
@@ -141,8 +146,6 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
     }
 
     override fun onPause() {
-        // Don't listen for updates to stories while user is in the log
-        viewModel.registration.remove()
         Log.d(TAG, "onPause: called")
         super.onPause()
     }

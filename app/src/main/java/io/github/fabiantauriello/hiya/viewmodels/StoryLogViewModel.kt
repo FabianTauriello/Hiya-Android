@@ -51,18 +51,25 @@ class StoryLogViewModel : ViewModel() {
     }
 
     fun addAuthorToDoneList() {
-        db.runBatch {
-            val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
-            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        db.runTransaction { transaction ->
+            // mark the whole story as finished if coAuthor has already marked the story as done
+            val story = transaction.get(storyRef).toObject(Story::class.java)!!
+            val coAuthor = Utils.getCoAuthorFromStory(story)
+            if (coAuthor.done) {
+                transaction.update(storyRef, "finished", true)
+            }
+            // mark the story as done for this author
+            transaction.update(storyRef, "authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
+            transaction.update(storyRef, "authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
         }
     }
 
     fun removeAuthorFromDoneList() {
-        db.runBatch {
-            val ref = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            ref.update("authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
-            ref.update("authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        db.runBatch { batch ->
+            batch.update(storyRef, "authors", FieldValue.arrayRemove(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = true)))
+            batch.update(storyRef, "authors", FieldValue.arrayUnion(Author(Hiya.userId, Hiya.name, Hiya.profilePic, liked = false, done = false)))
         }
     }
 
@@ -78,6 +85,7 @@ class StoryLogViewModel : ViewModel() {
             title ="",
             text ="",
             lastUpdateTimestamp = newTimestamp,
+            finished = false,
             wordCount = 0,
             nextTurn = Hiya.userId,
             authorIds = arrayListOf(Hiya.userId, coAuthor.id),

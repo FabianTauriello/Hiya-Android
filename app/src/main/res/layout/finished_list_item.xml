@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/finishedListItem_container"
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/finishedListItem_profilePic"
@@ -49,12 +49,12 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/finishedListItem_storySnippet"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:lines="3"
+            android:maxLines="3"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/finishedListItem_like"
             app:layout_constraintEnd_toEndOf="parent"
