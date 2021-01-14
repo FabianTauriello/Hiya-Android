@@ -6,13 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentInProgressStoriesBinding
+import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel
 
@@ -38,13 +42,6 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
     ): View? {
         Log.d(TAG, "onCreateView: called")
         binding = FragmentInProgressStoriesBinding.inflate(inflater, container, false)
-
-        // set default state of view before loading stories
-        // TODO could put these in one function instead of three
-        showProgressBar()
-        hideFab()
-        hideRecyclerView()
-
         return binding.root
     }
 
@@ -53,11 +50,16 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
         // SETUP
 
         viewModel.listenForInProgressStories()
-        binding.rvInProgressStories.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(binding.fragmentInProgressStoriesRvInProgressStories.context, LinearLayout.VERTICAL)
+        binding.fragmentInProgressStoriesRvInProgressStories.addItemDecoration(dividerItemDecoration)
+        binding.fragmentInProgressStoriesRvInProgressStories.adapter = adapter
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = viewModel
 
         // VIEW LISTENERS
 
-        binding.fabSelectUser.setOnClickListener {
+        binding.fragmentInProgressStoriesFabSelectUser.setOnClickListener {
             if (findNavController().currentDestination?.id == R.id.inProgressStoriesFragment) {
                 findNavController().navigate(InProgressStoriesFragmentDirections.actionInProgressStoriesFragmentToUserListDialog())
             }
@@ -66,41 +68,13 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
         // OBSERVERS
 
         // observe in progress stories livedata and update rv
-        viewModel.inProgressStoryList.observe(viewLifecycleOwner, { list ->
-            adapter.updateList(list)
-            Log.d(TAG, "onViewCreated: updated")
-            hideProgressBar()
-            showFab()
-            showRecyclerView()
+        viewModel.inProgressStoryList.observe(viewLifecycleOwner, { response ->
+            Log.d(TAG, "onViewCreated: observed")
+            if (response.queryStatus == QueryStatus.SUCCESS) {
+                adapter.updateList(response.list)
+            }
         })
 
-        val s = Firebase.firestore.collection("stories").document("2KSsVIDkJ2Nwa3DwDZXw").collection("authors").document("EpTpbigrh2tzFQZcoqdB")
-        s.update("done", false)
-
-    }
-
-    private fun hideRecyclerView() {
-        binding.rvInProgressStories.visibility = View.GONE
-    }
-
-    private fun showRecyclerView() {
-        binding.rvInProgressStories.visibility = View.VISIBLE
-    }
-
-    private fun hideFab() {
-        binding.fabSelectUser.visibility = View.GONE
-    }
-
-    private fun showFab() {
-        binding.fabSelectUser.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        binding.pbLoadContacts.visibility = View.GONE
-    }
-
-    private fun showProgressBar() {
-        binding.pbLoadContacts.visibility = View.VISIBLE
     }
 
     override fun onStoryClick(story: Story) {
@@ -120,35 +94,35 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
 
     // OTHER LIFECYCLE METHODS - TODO DELETE LATER
 
-    override fun onAttach(context: Context) {
-        Log.d(TAG, "onAttach: called")
-        super.onAttach(context)
-    }
-
-    override fun onResume() {
-        Log.d(TAG, "onResume: called")
-        super.onResume()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy: called")
-        super.onDestroy()
-    }
-
-    override fun onDetach() {
-        Log.d(TAG, "onDetach: called")
-        super.onDetach()
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "onStop: called")
-        super.onStop()
-    }
-
-    override fun onPause() {
-        Log.d(TAG, "onPause: called")
-        super.onPause()
-    }
+//    override fun onAttach(context: Context) {
+//        Log.d(TAG, "onAttach: called")
+//        super.onAttach(context)
+//    }
+//
+//    override fun onResume() {
+//        Log.d(TAG, "onResume: called")
+//        super.onResume()
+//    }
+//
+//    override fun onDestroy() {
+//        Log.d(TAG, "onDestroy: called")
+//        super.onDestroy()
+//    }
+//
+//    override fun onDetach() {
+//        Log.d(TAG, "onDetach: called")
+//        super.onDetach()
+//    }
+//
+//    override fun onStop() {
+//        Log.d(TAG, "onStop: called")
+//        super.onStop()
+//    }
+//
+//    override fun onPause() {
+//        Log.d(TAG, "onPause: called")
+//        super.onPause()
+//    }
 
 
 }

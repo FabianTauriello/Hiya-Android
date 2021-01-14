@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.github.fabiantauriello.hiya.databinding.FragmentFinishedStoriesBinding
+import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.ui.main.inprogress.StoryListItemClickListener
 import io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel
@@ -37,14 +38,22 @@ class FinishedStoriesFragment : Fragment(), StoryListItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // SETUP
+
         viewModel.listenForFinishedStories()
-        val dividerItemDecoration = DividerItemDecoration(binding.rvFinishedStories.context, LinearLayout.VERTICAL)
-        binding.rvFinishedStories.addItemDecoration(dividerItemDecoration)
-        binding.rvFinishedStories.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(binding.fragmentFinishedStoriesRvFinishedStories.context, LinearLayout.VERTICAL)
+        binding.fragmentFinishedStoriesRvFinishedStories.addItemDecoration(dividerItemDecoration)
+        binding.fragmentFinishedStoriesRvFinishedStories.adapter = adapter
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = viewModel
 
         // observe finished stories livedata and update rv
-        viewModel.finishedStoryList.observe(viewLifecycleOwner, { list ->
-            adapter.updateList(list)
+        viewModel.finishedStoryList.observe(viewLifecycleOwner, { response ->
+            if (response.queryStatus == QueryStatus.SUCCESS) {
+                adapter.updateList(response.list)
+            }
         })
     }
 

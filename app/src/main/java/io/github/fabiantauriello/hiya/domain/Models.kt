@@ -41,6 +41,9 @@ data class Author(
 // Use this for when you want to know the status of a Firebase query WITH the data.
 data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val message: String?) {
     companion object {
+        fun <T> loading(): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.LOADING, null, null)
+        }
         fun <T> success(data: T): FirestoreResponse<T> {
             return FirestoreResponse(QueryStatus.SUCCESS, data, null)
         }
@@ -50,9 +53,26 @@ data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val 
     }
 }
 
+data class StoriesResponse(var queryStatus: QueryStatus, var list: ArrayList<Story> = arrayListOf(), val message: String = "") {
+    companion object {
+        fun loading(): StoriesResponse {
+            return StoriesResponse(QueryStatus.LOADING)
+        }
+        fun success(list: ArrayList<Story>): StoriesResponse {
+            return StoriesResponse(QueryStatus.SUCCESS, list)
+        }
+        fun error(msg: String): StoriesResponse {
+            return StoriesResponse(QueryStatus.ERROR,  message = msg)
+        }
+    }
+}
+
 // Use this for when you want to know the status of a Firebase query WITHOUT data.
 data class FirestoreResponseWithoutData(var queryStatus: QueryStatus, val message: String?) {
     companion object {
+        fun <T> loading(): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.LOADING, null, null)
+        }
         fun success(): FirestoreResponseWithoutData {
             return FirestoreResponseWithoutData(QueryStatus.SUCCESS, null)
         }
@@ -63,6 +83,7 @@ data class FirestoreResponseWithoutData(var queryStatus: QueryStatus, val messag
 }
 
 enum class QueryStatus {
+    LOADING,
     SUCCESS,
     ERROR
 }

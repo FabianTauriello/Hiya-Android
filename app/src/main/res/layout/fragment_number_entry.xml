@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvPhoneNumberTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvPhoneNumberInformation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvPhoneNumberWarning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilPhoneNumber" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

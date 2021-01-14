@@ -73,8 +73,8 @@ class UserListViewModel : ViewModel() {
                         if (!snapshot.isEmpty) {
                             val matchingContacts: ArrayList<User> = arrayListOf()
                             for (user in snapshot.documents) {
-                                val userPhoneNumber = user.get("phoneNumber") as String
-                                val profileImageUri = user.get("profileImageUri") as String
+                                val userPhoneNumber = user.getString("phoneNumber")!!
+                                val profilePic = user.getString("profilePic")!!
                                 val index = deviceContactPhoneNumberList.indexOf(userPhoneNumber)
                                 if (index != -1) {
                                     // contact has Hiya
@@ -83,7 +83,7 @@ class UserListViewModel : ViewModel() {
                                             user.id,
                                             deviceContactNameList[index],
                                             userPhoneNumber,
-                                            profileImageUri
+                                            profilePic
                                         )
                                     )
                                 }

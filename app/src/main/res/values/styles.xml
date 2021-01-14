@@ -1,24 +1,10 @@
 <resources>
     <!-- Inheriting from a MaterialComponents theme will enable the automatic inflation of material widgets in my layouts -->
     <style name="Theme.Hiya" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
-        <item name="colorSurface">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryLight</item>
+
+        <!-- for app bar when in background -->
+        <item name="colorPrimary">@color/black</item>
+        <!-- for status bar -->
+        <item name="colorPrimaryDark">@color/black</item>
     </style>
-
-    <!-- Second theme (Dark) -->
-    <style name="Theme.Hiya.Dark">
-        <item name="colorPrimary">#ffffff</item>
-        <item name="colorPrimaryDark">#ffffff</item>
-        <item name="colorAccent">#ffffff</item>
-        <item name="colorOnPrimary">#ffffff</item>
-        <item name="colorError">#ffffff</item>
-    </style>
-
-    <!-- You should always inherit your core app styles from the Android Support Library (or Material Components first) -->
-    <!-- If you specify both, the parent attribute completely overrules the "dotted parent" (i.e., anything defined in the dotted parent is ignored). -->
-    
-
 </resources>

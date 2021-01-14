@@ -2,20 +2,21 @@ package io.github.fabiantauriello.hiya.ui.main.inprogress
 
 import android.content.Context
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentFullScreenStoryBinding
 import io.github.fabiantauriello.hiya.viewmodels.StoryLogViewModel
-
+import kotlinx.android.synthetic.main.finished_list_item.*
 
 class FullScreenStoryFragment : Fragment() {
 
-    private val LC_TAG = "LC_FULL"
     private val TAG = this::class.java.name
 
     private lateinit var binding: FragmentFullScreenStoryBinding
@@ -36,37 +37,40 @@ class FullScreenStoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // initialize story text view
-        binding.tvStoryFull.text = viewModel.story.value?.data?.text
+        binding.fragmentFullScreenStoryStoryText.text = viewModel.story.value?.data?.text
+        binding.fragmentFullScreenStoryBackButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d(LC_TAG, "full onAttach: called")
+        Log.d(TAG, "full onAttach: called")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d(LC_TAG, "full onResume: called")
+        Log.d(TAG, "full onResume: called")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(LC_TAG, "full onDestroy: called $id")
+        Log.d(TAG, "full onDestroy: called $id")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d(LC_TAG, "full onDetach: called")
+        Log.d(TAG, "full onDetach: called")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(LC_TAG, "full onStop: called")
+        Log.d(TAG, "full onStop: called")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(LC_TAG, "full onPause: called")
+        Log.d(TAG, "full onPause: called")
     }
 
 }

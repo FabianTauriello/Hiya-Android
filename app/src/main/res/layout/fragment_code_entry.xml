@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvCodeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCodeTitle" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

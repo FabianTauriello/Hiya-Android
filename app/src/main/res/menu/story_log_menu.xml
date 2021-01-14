@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_fullscreen"
+        android:title="Fullscreen"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_fullscreen" />
+    <item
         android:id="@+id/action_done"
         android:title="Done"
         app:showAsAction="ifRoom" />
@@ -10,4 +15,5 @@
         android:title="Settings"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_settings" />
+
 </menu>

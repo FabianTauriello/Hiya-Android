@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="story"
+            type="io.github.fabiantauriello.hiya.domain.Story" />
+        <variable
+            name="coAuthor"
+            type="io.github.fabiantauriello.hiya.domain.Author" />
+        <import type="io.github.fabiantauriello.hiya.util.Utils"/>
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutStoryItem"
         android:layout_width="match_parent"
@@ -15,12 +25,13 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            app:img="@{coAuthor.profilePic}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvStoryTitle"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -29,6 +40,7 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textStyle="bold"
+            android:text="@{coAuthor.name}"
             app:layout_constraintBottom_toTopOf="@+id/tvStorySnippet"
             app:layout_constraintEnd_toStartOf="@+id/tvLastUpdateTimestamp"
             app:layout_constraintHorizontal_bias="0.0"
@@ -36,7 +48,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@sample/story_title" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvStorySnippet"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -49,25 +61,28 @@
             app:layout_constraintEnd_toStartOf="@+id/tvWordCount"
             app:layout_constraintStart_toEndOf="@+id/ivStoryPicture"
             app:layout_constraintTop_toBottomOf="@+id/tvStoryTitle"
+            app:storySnippet="@{story}"
             tools:text="@sample/story_long" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvLastUpdateTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
+            android:text="@{Utils.INSTANCE.formatTimestampToTime(story.lastUpdateTimestamp)}"
             app:layout_constraintBottom_toBottomOf="@+id/tvStoryTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvStoryTitle"
             tools:text="@sample/timestamp" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvWordCount"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
+            app:wordCount="@{story}"
             app:layout_constraintBottom_toBottomOf="@+id/tvStorySnippet"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvStorySnippet"

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
@@ -34,20 +35,20 @@ class StoryLogViewModel : ViewModel() {
     // listen to one story document for changes. called once at beginning and then again with each change
     // THIS SHOULD ONLY BE CALLED ONCE! And everything else should just listen to the changes made (e.g storyText)
     fun listenForChangesToStory() {
-        db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            .addSnapshotListener { snapshot, e ->
-                Log.d(TAG, "listenForChangesToStory: called")
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    val story = snapshot.toObject(Story::class.java)!!
-                    _story.value = FirestoreResponse.success(story)
-                } else {
-                    Log.d(TAG, "Current data: null")
-                }
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        storyRef.addSnapshotListener { snapshot, e ->
+            Log.d(TAG, "listenForChangesToStory: called")
+            if (e != null) {
+                return@addSnapshotListener
             }
+
+            if (snapshot != null && snapshot.exists()) {
+                val story = snapshot.toObject(Story::class.java)!!
+                _story.value = FirestoreResponse.success(story)
+            } else {
+                Log.d(TAG, "Current data: null")
+            }
+        }
     }
 
     fun addAuthorToDoneList() {
@@ -82,8 +83,8 @@ class StoryLogViewModel : ViewModel() {
         val newTimestamp = System.currentTimeMillis().toString()
         val newStory = Story(
             id = newStoryId,
-            title ="",
-            text ="",
+            title = "",
+            text = "",
             lastUpdateTimestamp = newTimestamp,
             finished = false,
             wordCount = 0,
@@ -125,7 +126,7 @@ class StoryLogViewModel : ViewModel() {
             // update fields in db
             transaction.update(storyRef, "lastUpdateTimestamp", timestamp)
             transaction.update(storyRef, "wordCount", newWordCount)
-            transaction.update(storyRef, "nextTurn", coAuthorId)
+//            transaction.update(storyRef, "nextTurn", coAuthorId)
             transaction.update(storyRef, "text", newText)
 
             // Success
@@ -140,8 +141,13 @@ class StoryLogViewModel : ViewModel() {
             }
     }
 
+    fun updateStory(updates: Map<String, Any>) {
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        storyRef.update(updates)
+    }
+
     fun updateStoryId(newStoryId: String) {
-        storyId = newStoryId
+        storyId = newStoryId // TODO maybe just update _story property in this class instead with the new ID
     }
 
     override fun onCleared() {

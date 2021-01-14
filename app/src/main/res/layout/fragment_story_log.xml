@@ -9,44 +9,55 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/etNewWord"
+        app:layout_constraintBottom_toTopOf="@id/fragmentStoryLog_etNewSentence"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvStoryLog"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragmentStoryLog_tvStory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:background="@drawable/bg_story"
-            android:clickable="true"
-            android:focusable="true"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:paddingRight="10dp"
             android:paddingBottom="5dp"
+            android:textSize="16sp"
+            app:lineHeight="24dp"
             tools:text="@sample/story_long" />
     </ScrollView>
 
     <EditText
-        android:id="@+id/etNewWord"
+        android:id="@+id/fragmentStoryLog_etNewSentence"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:importantForAutofill="no"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnAddToStory"
+        app:layout_constraintEnd_toStartOf="@+id/fragmentStoryLog_btnAddToStory"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/btnAddToStory"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fragmentStoryLog_btnAddToStory"
         android:layout_width="40dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_send_btn"
         android:enabled="false"
-        app:layout_constraintBottom_toBottomOf="@+id/etNewWord"
+        app:layout_constraintBottom_toBottomOf="@+id/fragmentStoryLog_etNewSentence"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/fragmentStoryLog_tvTurnText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        tools:text="@sample/turn_text"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentStoryLog_etNewSentence"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

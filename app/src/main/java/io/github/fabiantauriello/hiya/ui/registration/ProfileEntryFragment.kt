@@ -3,6 +3,7 @@ package io.github.fabiantauriello.hiya.ui.registration
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentProfileEntryBinding
 import io.github.fabiantauriello.hiya.domain.User
@@ -69,24 +71,27 @@ class ProfileEntryFragment : Fragment() {
 
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             // get location of where the photo is stored on device
+//            deviceImageUri = data.data
+//
+//            // using deprecated methods to support older devices (running API 21) like my own.
+//            val bitmap =
+//                MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, deviceImageUri)
+//
+//            // hide button
+//            binding.btnProfilePic.alpha = 0f
+//
+//            // fill in profile image view with selected photo
+//            binding.ivProfilePic.setImageBitmap(bitmap)
+
+            // TODO new way but check this
             deviceImageUri = data.data
-
-            // using deprecated methods to support older devices (running API 21) like my own.
-            val bitmap =
-                MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, deviceImageUri)
-
-            // hide button
-            binding.btnProfilePic.alpha = 0f
-
-            // fill in profile image view with selected photo
-            binding.ivProfilePic.setImageBitmap(bitmap)
+            val imageStream = requireActivity().contentResolver.openInputStream(deviceImageUri!!);
+            val selectedImage = BitmapFactory.decodeStream(imageStream);
+            binding.ivProfilePic.setImageBitmap(selectedImage);
         }
     }
 
     private fun saveProfileImageToFirebase() {
-
-        // TODO rooms will be empty when user signs up (or signs back in)?
-
         // if an image was not selected, just save user info. Otherwise, save user info AND image location
         if (deviceImageUri == null) {
             saveUserToFirebase(

@@ -35,20 +35,28 @@ class EditStoryDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        // SETUP
+
+        binding.fragmentEditStoryDetailsEtTitle.setText(viewModel.story.value?.data?.title.toString())
+
         // VIEW LISTENERS
 
-        binding.etTitle.addTextChangedListener(
+        binding.fragmentEditStoryDetailsEtTitle.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun afterTextChanged(s: Editable?) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     // don't let user enter an empty title
-                    binding.btnSave.isEnabled = !s?.trim().isNullOrEmpty()
+                    binding.fragmentEditStoryDetailsBtnSave.isEnabled = !s?.trim().isNullOrEmpty()
                 }
             }
         )
-        binding.btnSave.setOnClickListener {
-            // TODO
+        binding.fragmentEditStoryDetailsBtnSave.setOnClickListener {
+            val title = binding.fragmentEditStoryDetailsEtTitle.text.toString()
+            val updates = mapOf<String, Any>(
+                "title" to title
+            )
+            viewModel.updateStory(updates)
         }
     }
 

@@ -8,6 +8,8 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
+import io.github.fabiantauriello.hiya.domain.FirestoreResponse
+import io.github.fabiantauriello.hiya.domain.StoriesResponse
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
 import kotlinx.android.synthetic.main.fragment_story_log.view.*
@@ -18,21 +20,23 @@ class StoriesViewModel : ViewModel() {
 
     private val db = Firebase.firestore
 
-    private val _inProgressStoryList = MutableLiveData<ArrayList<Story>>()
-    val inProgressStoryList: LiveData<ArrayList<Story>>
+    private val _inProgressStoryList = MutableLiveData<StoriesResponse>()
+    val inProgressStoryList: LiveData<StoriesResponse>
         get() = _inProgressStoryList
 
-    private val _finishedStoryList = MutableLiveData<ArrayList<Story>>()
-    val finishedStoryList: LiveData<ArrayList<Story>>
+    private val _finishedStoryList = MutableLiveData<StoriesResponse>()
+    val finishedStoryList: LiveData<StoriesResponse>
         get() = _finishedStoryList
 
-    private val _likedStoryList = MutableLiveData<ArrayList<Story>>()
-    val likedStoryList: LiveData<ArrayList<Story>>
+    private val _likedStoryList = MutableLiveData<StoriesResponse>()
+    val likedStoryList: LiveData<StoriesResponse>
         get() = _likedStoryList
 
     // for in-progress stories fragment
     fun listenForInProgressStories() {
         Log.d(TAG, "listenForInProgressStories: called")
+
+        _inProgressStoryList.value = StoriesResponse.loading()
 
         val storiesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
             .whereArrayContains("authorIds", Hiya.userId).whereEqualTo("finished", false)
@@ -47,7 +51,7 @@ class StoriesViewModel : ViewModel() {
                 val story = doc.toObject(Story::class.java)!!
                 inProgressTempList.add(story)
             }
-            _inProgressStoryList.value = inProgressTempList
+            _inProgressStoryList.value = StoriesResponse.success(inProgressTempList)
         }
     }
 
@@ -73,8 +77,8 @@ class StoriesViewModel : ViewModel() {
                 }
                 finishedTempList.add(story)
             }
-            _finishedStoryList.value = finishedTempList
-            _likedStoryList.value = likedTempList
+            _finishedStoryList.value = StoriesResponse.success(finishedTempList)
+            _likedStoryList.value = StoriesResponse.success(likedTempList)
         }
     }
 
