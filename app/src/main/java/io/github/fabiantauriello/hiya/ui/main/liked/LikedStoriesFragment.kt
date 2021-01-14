@@ -50,7 +50,7 @@ class LikedStoriesFragment : Fragment(), StoryListItemClickListener {
         // observe finished stories livedata and update rv
         viewModel.likedStoryList.observe(viewLifecycleOwner, { response ->
             if (response.queryStatus == QueryStatus.SUCCESS) {
-                adapter.updateList(response.list)
+                adapter.updateList(response.data)
             }
         })
     }

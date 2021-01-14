@@ -53,7 +53,7 @@ data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val 
     }
 }
 
-data class StoriesResponse(var queryStatus: QueryStatus, var list: ArrayList<Story> = arrayListOf(), val message: String = "") {
+data class StoriesResponse(var queryStatus: QueryStatus, var data: ArrayList<Story> = arrayListOf(), val message: String = "") {
     companion object {
         fun loading(): StoriesResponse {
             return StoriesResponse(QueryStatus.LOADING)

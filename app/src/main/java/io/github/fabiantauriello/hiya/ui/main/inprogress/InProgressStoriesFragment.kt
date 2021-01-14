@@ -1,19 +1,15 @@
 package io.github.fabiantauriello.hiya.ui.main.inprogress
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentInProgressStoriesBinding
 import io.github.fabiantauriello.hiya.domain.QueryStatus
@@ -71,7 +67,7 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
         viewModel.inProgressStoryList.observe(viewLifecycleOwner, { response ->
             Log.d(TAG, "onViewCreated: observed")
             if (response.queryStatus == QueryStatus.SUCCESS) {
-                adapter.updateList(response.list)
+                adapter.updateList(response.data)
             }
         })
 

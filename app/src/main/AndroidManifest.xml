@@ -3,6 +3,8 @@
     package="io.github.fabiantauriello.hiya">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:name=".app.Hiya"

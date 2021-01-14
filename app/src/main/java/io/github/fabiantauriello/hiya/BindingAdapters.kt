@@ -1,6 +1,5 @@
 package io.github.fabiantauriello.hiya
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -9,8 +8,6 @@ import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.firestore.local.QueryResult
-import io.github.fabiantauriello.hiya.domain.FirestoreResponse
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.StoriesResponse
 import io.github.fabiantauriello.hiya.domain.Story
@@ -52,7 +49,7 @@ fun toggleProgressBar(pb: ProgressBar, liveData: LiveData<StoriesResponse>) {
 
 @BindingAdapter("emptyListMessageVisibility")
 fun toggleEmptyDataMessage(tv: TextView, liveData: LiveData<StoriesResponse>) {
-    if (liveData.value?.queryStatus == QueryStatus.SUCCESS && liveData.value?.list?.isEmpty()!!) {
+    if (liveData.value?.queryStatus == QueryStatus.SUCCESS && liveData.value?.data?.isEmpty()!!) {
         tv.visibility = View.VISIBLE
     } else {
         tv.visibility = View.GONE

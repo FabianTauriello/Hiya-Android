@@ -52,7 +52,7 @@ class FinishedStoriesFragment : Fragment(), StoryListItemClickListener {
         // observe finished stories livedata and update rv
         viewModel.finishedStoryList.observe(viewLifecycleOwner, { response ->
             if (response.queryStatus == QueryStatus.SUCCESS) {
-                adapter.updateList(response.list)
+                adapter.updateList(response.data)
             }
         })
     }
