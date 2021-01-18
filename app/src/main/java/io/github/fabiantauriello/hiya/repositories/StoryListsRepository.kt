@@ -6,7 +6,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
-import io.github.fabiantauriello.hiya.domain.StoriesResponse
+import io.github.fabiantauriello.hiya.domain.FirestoreResponse
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
 
@@ -16,15 +16,15 @@ class StoryListsRepository {
 
     private val db = Firebase.firestore
 
-    val inProgressStoryList = MutableLiveData<StoriesResponse>()
-    val finishedStoryList = MutableLiveData<StoriesResponse>()
-    val likedStoryList = MutableLiveData<StoriesResponse>()
+    val inProgressStoryList = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
+    val finishedStoryList = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
+    val likedStoryList = MutableLiveData<FirestoreResponse<ArrayList<Story>>>()
 
     // for in-progress stories fragment
     fun listenForInProgressStories() {
         Log.d(TAG, "listenForInProgressStories: called")
 
-        inProgressStoryList.value = StoriesResponse.loading()
+        inProgressStoryList.value = FirestoreResponse.loading()
 
         val storiesRef = db.collection(Hiya.STORIES_COLLECTION_PATH)
             .whereArrayContains("authorIds", Hiya.userId).whereEqualTo("finished", false)
@@ -34,12 +34,12 @@ class StoryListsRepository {
             if (error != null) {
                 return@addSnapshotListener
             }
-            val inProgressTempList = arrayListOf<Story>()
+            val inProTempList = arrayListOf<Story>()
             for (doc in snapshot?.documents!!) {
                 val story = doc.toObject(Story::class.java)!!
-                inProgressTempList.add(story)
+                inProTempList.add(story)
             }
-            inProgressStoryList.value = StoriesResponse.success(inProgressTempList)
+            inProgressStoryList.value = if(inProTempList.isEmpty()) FirestoreResponse.success(null) else FirestoreResponse.success(inProTempList)
         }
     }
 
@@ -55,7 +55,7 @@ class StoryListsRepository {
             if (error != null) {
                 return@addSnapshotListener
             }
-            val finishedTempList = arrayListOf<Story>()
+            val finTempList = arrayListOf<Story>()
             val likedTempList = arrayListOf<Story>()
             for (doc in snapshot?.documents!!) {
                 val story = doc.toObject(Story::class.java)!!
@@ -63,10 +63,10 @@ class StoryListsRepository {
                 if (storyIsLiked) {
                     likedTempList.add(story)
                 }
-                finishedTempList.add(story)
+                finTempList.add(story)
             }
-            finishedStoryList.value = StoriesResponse.success(finishedTempList)
-            likedStoryList.value = StoriesResponse.success(likedTempList)
+            finishedStoryList.value = if (finTempList.isEmpty()) FirestoreResponse.success(null) else FirestoreResponse.success(finTempList)
+            likedStoryList.value = if (likedTempList.isEmpty()) FirestoreResponse.success(null) else FirestoreResponse.success(likedTempList)
         }
     }
 }

@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvUserListTitle"
+        android:id="@+id/userList_tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -17,13 +17,13 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutPhoneEntry"
+        android:id="@+id/userList_phoneEntryContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/layoutContactsPermissionDeniedWarning"
+            android:id="@+id/userList_PermDeniedContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
@@ -32,13 +32,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/ivWarningIcon"
+                android:id="@+id/userList_ivWarningIcon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:srcCompat="@drawable/ic_warning" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvContactPermissionDeniedWarning"
+                android:id="@+id/userList_tvWarningMsg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -50,7 +50,7 @@
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvPhoneEntryInstruction"
+            android:id="@+id/userList_tvPhoneEntryInstruction"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
@@ -59,10 +59,10 @@
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutContactsPermissionDeniedWarning" />
+            app:layout_constraintTop_toBottomOf="@+id/userList_PermDeniedContainer" />
 
         <EditText
-            android:id="@+id/etPhoneEntry"
+            android:id="@+id/userList_etPhoneEntry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -70,17 +70,17 @@
             android:inputType="phone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvPhoneEntryInstruction" />
+            app:layout_constraintTop_toBottomOf="@+id/userList_tvPhoneEntryInstruction" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutUserList"
+        android:id="@+id/userList_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUsers"
+            android:id="@+id/userList_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -95,13 +95,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutProgressBar"
+        android:id="@+id/userList_pbContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/pbLoadUsers"
+            android:id="@+id/userList_pb"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

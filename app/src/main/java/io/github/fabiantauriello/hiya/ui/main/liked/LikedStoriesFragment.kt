@@ -41,9 +41,9 @@ class LikedStoriesFragment : Fragment(), StoryListItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.listenForFinishedStories()
 
-        val dividerItemDecoration = DividerItemDecoration(binding.fragmentLikedStoriesRvLikedStories.context, LinearLayout.VERTICAL)
-        binding.fragmentLikedStoriesRvLikedStories.addItemDecoration(dividerItemDecoration)
-        binding.fragmentLikedStoriesRvLikedStories.adapter = adapter
+        val dividerItemDecoration = DividerItemDecoration(binding.fragmentLikedStoriesRv.context, LinearLayout.VERTICAL)
+        binding.fragmentLikedStoriesRv.addItemDecoration(dividerItemDecoration)
+        binding.fragmentLikedStoriesRv.adapter = adapter
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = viewModel
 

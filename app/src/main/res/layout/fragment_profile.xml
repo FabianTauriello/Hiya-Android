@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvSignOut"
+            android:id="@+id/profile_tvSignOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="20sp"

@@ -46,9 +46,11 @@ class FinishedStoriesAdapter(
 
     override fun getItemCount() = stories.size
 
-    fun updateList(newList: ArrayList<Story>) {
+    fun updateList(newList: ArrayList<Story>?) {
         stories.clear()
-        stories = newList
+        if (newList != null) {
+            stories = newList
+        }
         notifyDataSetChanged()
     }
 }

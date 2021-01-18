@@ -15,7 +15,7 @@ class StoryLogRepository {
 
     private val db = Firebase.firestore
 
-    val addNewWordStatus = MutableLiveData<FirestoreResponseWithoutData>()
+    val addNewTextStatus = MutableLiveData<FirestoreResponseWithoutData>()
 
     val createNewStoryStatus = MutableLiveData<FirestoreResponseWithoutData>()
 
@@ -24,8 +24,8 @@ class StoryLogRepository {
     private lateinit var storyId: String
 
     // listen to one story document for changes. called once at beginning and then again with each change
-    // THIS SHOULD ONLY BE CALLED ONCE! And everything else should just listen to the changes made (e.g storyText)
     fun listenForChangesToStory() {
+        Log.d(TAG, "listenForChangesToStory: triggered")
         val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
         storyRef.addSnapshotListener { snapshot, e ->
             Log.d(TAG, "listenForChangesToStory: called")
@@ -41,7 +41,7 @@ class StoryLogRepository {
         }
     }
 
-    fun addNewWord(newWord: String) {
+    fun addToStoryText(newWord: String) {
         db.runTransaction { transaction ->
             val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
             val snapshot = transaction.get(storyRef)
@@ -58,7 +58,7 @@ class StoryLogRepository {
             // update fields in db
             transaction.update(storyRef, "lastUpdateTimestamp", timestamp)
             transaction.update(storyRef, "wordCount", newWordCount)
-//            transaction.update(storyRef, "nextTurn", coAuthorId)
+            transaction.update(storyRef, "nextTurn", coAuthorId)
             transaction.update(storyRef, "text", newText)
 
             // Success
@@ -66,10 +66,10 @@ class StoryLogRepository {
         }
             .addOnSuccessListener {
                 // update newWordStatus LiveData
-                addNewWordStatus.value = FirestoreResponseWithoutData.success()
+                addNewTextStatus.value = FirestoreResponseWithoutData.success()
             }
             .addOnFailureListener { e ->
-                addNewWordStatus.value = FirestoreResponseWithoutData.error(e.message.toString())
+                addNewTextStatus.value = FirestoreResponseWithoutData.error(e.message.toString())
             }
     }
 

@@ -7,7 +7,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/mainActivity_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/offBlack"
@@ -17,19 +17,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <fragment
-            android:id="@+id/navHostFragment"
+            android:id="@+id/mainActivity_navHost"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:defaultNavHost="true"
-            app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+            app:layout_constraintBottom_toTopOf="@+id/mainActivity_bottomNav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/mainActivity_toolbar"
             app:navGraph="@navigation/main_nav_graph" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
+            android:id="@+id/mainActivity_bottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/offBlack"

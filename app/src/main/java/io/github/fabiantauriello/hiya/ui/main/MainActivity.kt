@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -42,10 +41,10 @@ class MainActivity : AppCompatActivity() {
         Hiya.name = sharedPreferences.getString(Hiya.SHARED_PREFS_USERNAME, "") ?: ""
         Hiya.profilePic = sharedPreferences.getString(Hiya.SHARED_PREFS_PROFILE_PIC_URI, "") ?: ""
 
-        val navController = findNavController(R.id.navHostFragment)
+        val navController = findNavController(R.id.mainActivity_navHost)
 
         // initialize action bar with my toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar(mainActivity_toolbar)
 
         // configure action bar
         val appBarConfiguration = AppBarConfiguration.Builder(
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // configure bottom nav
-        binding.bottomNav.setupWithNavController(navController)
+        binding.mainActivityBottomNav.setupWithNavController(navController)
 
 //        // change action bar title based on story title or just use default label one from fragment
 //        sharedViewModel.storyLogTitle.observe(this, Observer {
@@ -95,23 +94,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showNavBar() {
-        binding.bottomNav.visibility = View.VISIBLE
+        binding.mainActivityBottomNav.visibility = View.VISIBLE
     }
 
     private fun hideNavBar() {
-        binding.bottomNav.visibility = View.GONE
+        binding.mainActivityBottomNav.visibility = View.GONE
     }
 
     private fun showToolbar() {
-        binding.toolbar.visibility = View.VISIBLE
+        binding.mainActivityToolbar.visibility = View.VISIBLE
     }
 
     private fun hideToolbar() {
-        binding.toolbar.visibility = View.GONE
+        binding.mainActivityToolbar.visibility = View.GONE
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.navHostFragment).navigateUp() || super.onSupportNavigateUp()
+        return findNavController(R.id.mainActivity_navHost).navigateUp() || super.onSupportNavigateUp()
     }
 
 

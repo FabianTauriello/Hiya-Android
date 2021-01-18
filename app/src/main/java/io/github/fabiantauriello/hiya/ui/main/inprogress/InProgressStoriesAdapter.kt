@@ -38,16 +38,18 @@ class InProgressStoriesAdapter(
         holder.binding.coAuthor = Utils.getCoAuthorFromStory(stories[position])
 
         // set click listener
-        holder.binding.layoutStoryItem.setOnClickListener {
+        holder.binding.inProItemContainer.setOnClickListener {
             listener.onStoryClick(stories[position])
         }
     }
 
     override fun getItemCount() = stories.size
 
-    fun updateList(newList: ArrayList<Story>) {
+    fun updateList(newList: ArrayList<Story>?) {
         stories.clear()
-        stories = newList
+        if (newList != null) {
+            stories = newList
+        }
         notifyDataSetChanged()
     }
 }

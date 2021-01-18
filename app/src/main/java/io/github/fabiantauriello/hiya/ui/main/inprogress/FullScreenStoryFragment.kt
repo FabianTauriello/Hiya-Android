@@ -38,9 +38,6 @@ class FullScreenStoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // initialize story text view
         binding.fragmentFullScreenStoryStoryText.text = viewModel.story.value?.data?.text
-        binding.fragmentFullScreenStoryBackButton.setOnClickListener {
-            findNavController().popBackStack()
-        }
     }
 
     override fun onAttach(context: Context) {

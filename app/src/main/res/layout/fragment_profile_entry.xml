@@ -7,7 +7,7 @@
     tools:context=".ui.registration.ProfileEntryFragment">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvProfileTitle"
+        android:id="@+id/materialTextView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
@@ -21,28 +21,28 @@
         android:id="@+id/btnProfilePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Select Photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvProfileTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/ivProfilePic" />
 
     <ImageView
         android:id="@+id/ivProfilePic"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnProfilePic"
-        app:layout_constraintEnd_toEndOf="@+id/btnProfilePic"
-        app:layout_constraintStart_toStartOf="@+id/btnProfilePic"
-        app:layout_constraintTop_toTopOf="@+id/btnProfilePic" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialTextView3" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

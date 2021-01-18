@@ -37,7 +37,7 @@ class UserListAdapter(
         holder.binding.user = users[position]
 
         // set click listener
-        holder.binding.userListItemContainer.setOnClickListener {
+        holder.binding.userItemContainer.setOnClickListener {
             listener.onUserClick(users[position])
         }
 

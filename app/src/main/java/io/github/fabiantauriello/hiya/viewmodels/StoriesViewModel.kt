@@ -1,11 +1,11 @@
 package io.github.fabiantauriello.hiya.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import io.github.fabiantauriello.hiya.domain.StoriesResponse
+import io.github.fabiantauriello.hiya.domain.FirestoreResponse
+import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.repositories.StoryListsRepository
 
 class StoriesViewModel : ViewModel() {
@@ -15,15 +15,15 @@ class StoriesViewModel : ViewModel() {
     private val db = Firebase.firestore
 
     private val _inProgressStoryList = repo.inProgressStoryList
-    val inProgressStoryList: LiveData<StoriesResponse>
+    val inProgressStoryList: LiveData<FirestoreResponse<ArrayList<Story>>>
         get() = _inProgressStoryList
 
     private val _finishedStoryList = repo.finishedStoryList
-    val finishedStoryList: LiveData<StoriesResponse>
+    val finishedStoryList: LiveData<FirestoreResponse<ArrayList<Story>>>
         get() = _finishedStoryList
 
     private val _likedStoryList = repo.likedStoryList
-    val likedStoryList: LiveData<StoriesResponse>
+    val likedStoryList: LiveData<FirestoreResponse<ArrayList<Story>>>
         get() = _likedStoryList
 
     fun listenForInProgressStories() {

@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+        <import type="io.github.fabiantauriello.hiya.domain.QueryStatus" />
         <variable
             name="vm"
             type="io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel" />
@@ -28,8 +30,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center"
-            app:emptyListMessageVisibility="@{vm.finishedStoryList}"
-            android:text="You haven't finished any stories yet. Once you and your co-author has ticked the done button, the story will be recognized as finished and they appear hear."
+            android:visibility="@{vm.finishedStoryList.queryStatus == QueryStatus.SUCCESS &amp;&amp; vm.finishedStoryList.data == null ? View.VISIBLE : View.GONE}"
+            android:text="You haven't finished any stories yet. Once you and your co-author has ticked the done button, the story will be recognized as finished and they appear here."
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -41,7 +43,7 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:pbVisibility="@{vm.finishedStoryList}"
+            android:visibility="@{vm.finishedStoryList.queryStatus == QueryStatus.LOADING ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

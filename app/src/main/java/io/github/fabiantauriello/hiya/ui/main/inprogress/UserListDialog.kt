@@ -44,7 +44,7 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.rvUsers.adapter = adapter
+        binding.userListRv.adapter = adapter
 
         requestContactsPermission()
     }
@@ -103,15 +103,15 @@ class UserListDialog : BottomSheetDialogFragment(), UserClickListener {
     }
 
     private fun showUserListLayout() {
-        binding.layoutUserList.visibility = View.VISIBLE
+        binding.userListContainer.visibility = View.VISIBLE
     }
 
     private fun showPhoneEntryLayout() {
-        binding.layoutPhoneEntry.visibility = View.VISIBLE
+        binding.userListPhoneEntryContainer.visibility = View.VISIBLE
     }
 
     private fun showUserListTitle() {
-        binding.tvUserListTitle.visibility = View.VISIBLE
+        binding.userListTvTitle.visibility = View.VISIBLE
     }
 
     // create new story with given contact

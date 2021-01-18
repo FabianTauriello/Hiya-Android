@@ -6,6 +6,7 @@
     app:startDestination="@id/inProgressStoriesFragment">
     <dialog
         android:id="@+id/userListDialog"
+        tools:layout="@layout/user_list_dialog"
         android:name="io.github.fabiantauriello.hiya.ui.main.inprogress.UserListDialog"
         android:label="Select a contact">
         <action

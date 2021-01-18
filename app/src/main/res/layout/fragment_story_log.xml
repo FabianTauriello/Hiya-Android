@@ -1,63 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.main.inprogress.StoryLogFragment">
-
-    <ScrollView
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="hiya"
+            type="io.github.fabiantauriello.hiya.app.Hiya" />
+        <variable
+            name="vm"
+            type="io.github.fabiantauriello.hiya.viewmodels.StoryLogViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/fragmentStoryLog_etNewSentence"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.main.inprogress.StoryLogFragment">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/fragmentStoryLog_tvStory"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/log_etStoryText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@null"
+            android:ems="10"
+            android:enabled="@{vm.story.data.nextTurn.equals(hiya.Companion.userId)}"
+            android:gravity="top"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|text"
+            android:lineSpacingExtra="4sp"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:text="@={vm.story.data.text}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@sample/story_long[0]" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/log_fabAddText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:textSize="16sp"
-            app:lineHeight="24dp"
-            tools:text="@sample/story_long" />
-    </ScrollView>
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:enabled="false"
+            android:src="@drawable/ic_send_btn"
+            android:tooltipText="@{vm.story.data.nextTurn}"
+            android:visibility="@{vm.story.data.nextTurn.equals(hiya.Companion.userId) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/fragmentStoryLog_etNewSentence"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fragmentStoryLog_btnAddToStory"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/fragmentStoryLog_btnAddToStory"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:background="@drawable/ic_send_btn"
-        android:enabled="false"
-        app:layout_constraintBottom_toBottomOf="@+id/fragmentStoryLog_etNewSentence"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/fragmentStoryLog_tvTurnText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        tools:text="@sample/turn_text"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentStoryLog_etNewSentence"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

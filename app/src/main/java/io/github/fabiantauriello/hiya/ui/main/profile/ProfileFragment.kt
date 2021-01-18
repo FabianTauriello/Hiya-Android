@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun configureSignOutButtonListener() {
-        binding.tvSignOut.setOnClickListener{
+        binding.profileTvSignOut.setOnClickListener{
             // sign out
             firebaseAuth.signOut()
 

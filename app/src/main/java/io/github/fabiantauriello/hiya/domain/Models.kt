@@ -39,30 +39,16 @@ data class Author(
 ) : Parcelable
 
 // Use this for when you want to know the status of a Firebase query WITH the data.
-data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T?, val message: String?) {
+data class FirestoreResponse<T>(var queryStatus: QueryStatus, var data: T? = null, val message: String? = null) {
     companion object {
         fun <T> loading(): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.LOADING, null, null)
+            return FirestoreResponse(QueryStatus.LOADING)
         }
-        fun <T> success(data: T): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.SUCCESS, data, null)
+        fun <T> success(data: T?): FirestoreResponse<T> {
+            return FirestoreResponse(QueryStatus.SUCCESS, data)
         }
         fun <T> error(msg: String): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.ERROR,  null, msg)
-        }
-    }
-}
-
-data class StoriesResponse(var queryStatus: QueryStatus, var data: ArrayList<Story> = arrayListOf(), val message: String = "") {
-    companion object {
-        fun loading(): StoriesResponse {
-            return StoriesResponse(QueryStatus.LOADING)
-        }
-        fun success(list: ArrayList<Story>): StoriesResponse {
-            return StoriesResponse(QueryStatus.SUCCESS, list)
-        }
-        fun error(msg: String): StoriesResponse {
-            return StoriesResponse(QueryStatus.ERROR,  message = msg)
+            return FirestoreResponse(QueryStatus.ERROR,  message = msg)
         }
     }
 }
@@ -70,8 +56,8 @@ data class StoriesResponse(var queryStatus: QueryStatus, var data: ArrayList<Sto
 // Use this for when you want to know the status of a Firebase query WITHOUT data.
 data class FirestoreResponseWithoutData(var queryStatus: QueryStatus, val message: String?) {
     companion object {
-        fun <T> loading(): FirestoreResponse<T> {
-            return FirestoreResponse(QueryStatus.LOADING, null, null)
+        fun <T> loading(): FirestoreResponseWithoutData {
+            return FirestoreResponseWithoutData(QueryStatus.LOADING, null)
         }
         fun success(): FirestoreResponseWithoutData {
             return FirestoreResponseWithoutData(QueryStatus.SUCCESS, null)

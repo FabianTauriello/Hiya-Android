@@ -2,16 +2,9 @@ package io.github.fabiantauriello.hiya.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.domain.*
 import io.github.fabiantauriello.hiya.repositories.StoryLogRepository
-import io.github.fabiantauriello.hiya.util.Utils
 
 class StoryLogViewModel : ViewModel() {
 
@@ -19,17 +12,11 @@ class StoryLogViewModel : ViewModel() {
 
     private val repo = StoryLogRepository()
 
-    private val _addNewWordStatus = repo.addNewWordStatus
-    val addNewWordStatus: LiveData<FirestoreResponseWithoutData>
-        get() = _addNewWordStatus
+    val addNewTextStatus = repo.addNewTextStatus
 
-    private val _createNewStoryStatus = repo.createNewStoryStatus
-    val createNewStoryStatus: LiveData<FirestoreResponseWithoutData>
-        get() = _createNewStoryStatus
+    val createNewStoryStatus = repo.createNewStoryStatus
 
-    private val _story = repo.story
-    val story: LiveData<FirestoreResponse<Story>>
-        get() = _story
+    val story = repo.story
 
     fun listenForChangesToStory() {
         repo.listenForChangesToStory()
@@ -47,8 +34,11 @@ class StoryLogViewModel : ViewModel() {
         repo.createNewStory(coAuthor)
     }
 
-    fun addNewWord(newWord: String) {
-        repo.addNewWord(newWord)
+    fun addToStoryText(startIndex: Int, endIndex: Int) { // todo I just realized that this won't work either because the new text entered could be exactly the same as the previous text
+        Log.d(TAG, "start: $startIndex")
+        Log.d(TAG, "end: $endIndex")
+        val text = story.value?.data?.text?.subSequence(startIndex, endIndex).toString()
+        repo.addToStoryText(text)
     }
 
     fun updateStory(updates: Map<String, Any>) {
