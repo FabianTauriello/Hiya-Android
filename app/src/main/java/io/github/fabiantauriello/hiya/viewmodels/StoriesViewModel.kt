@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.FirestoreResponse
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.repositories.StoryListsRepository
@@ -32,6 +33,10 @@ class StoriesViewModel : ViewModel() {
 
     fun listenForFinishedStories() {
         repo.listenForFinishedStories()
+    }
+
+    fun updateLikeStatus(storyId: String, author: Author, liked: Boolean) {
+        repo.updateLikeStatus(storyId, author, liked)
     }
 
 }

@@ -1,17 +1,15 @@
 package io.github.fabiantauriello.hiya.ui.main.inprogress
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.databinding.FragmentEditStoryDetailsBinding
 import io.github.fabiantauriello.hiya.viewmodels.StoryLogViewModel
@@ -25,6 +23,15 @@ class EditStoryDetailsFragment : Fragment() {
 
     private val viewModel: StoryLogViewModel by navGraphViewModels(R.id.storyLogNestedGraph)
 
+    private lateinit var tagAdapter: ArrayAdapter<String>
+
+    private val tags = ArrayList<String>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        tagAdapter = ArrayAdapter<String>(requireContext(), R.layout.tag_list_item, resources.getStringArray(R.array.story_tags))
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,27 +44,47 @@ class EditStoryDetailsFragment : Fragment() {
 
         // SETUP
 
-        binding.fragmentEditStoryDetailsEtTitle.setText(viewModel.story.value?.data?.title.toString())
+        viewModel.story.value?.data?.tags?.forEach { addChipToGroup(it) }
+        binding.editDetailsEtTitle.setText(viewModel.story.value?.data?.title)
+        binding.editDetailsEtTags.setAdapter(tagAdapter)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = viewModel
 
         // VIEW LISTENERS
 
-        binding.fragmentEditStoryDetailsEtTitle.addTextChangedListener(
-            object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun afterTextChanged(s: Editable?) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    // don't let user enter an empty title
-                    binding.fragmentEditStoryDetailsBtnSave.isEnabled = !s?.trim().isNullOrEmpty()
-                }
-            }
-        )
-        binding.fragmentEditStoryDetailsBtnSave.setOnClickListener {
-            val title = binding.fragmentEditStoryDetailsEtTitle.text.toString()
-            val updates = mapOf<String, Any>(
-                "title" to title
-            )
-            viewModel.updateStory(updates)
+        binding.editDetailsEtTags.setOnItemClickListener { parent, _, position, _ ->
+            binding.editDetailsEtTags.text = null
+            val selectedItem = parent.getItemAtPosition(position) as String
+            addChipToGroup(selectedItem)
         }
     }
+
+    private fun addChipToGroup(newTag: String) {
+        // create a new chip if it hasn't already been added
+        if (!tags.contains(newTag)) {
+            tags.add(newTag)
+            val chip = Chip(context)
+            chip.text = newTag
+            chip.isCloseIconVisible = true
+            chip.setEnsureMinTouchTargetSize(false)
+            binding.editDetailsCgTags.addView(chip as View)
+
+            chip.setOnCloseIconClickListener {
+                tags.remove(newTag)
+                binding.editDetailsCgTags.removeView(chip as View)
+            }
+        }
+    }
+
+
+    override fun onStop() {
+        val title = binding.editDetailsEtTitle.text.toString()
+        viewModel.updateTitle(title)
+        viewModel.updateTags(tags)
+        super.onStop()
+    }
+
+
+
 
 }

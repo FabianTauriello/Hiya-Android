@@ -37,6 +37,7 @@ object Utils {
         }
     }
 
+
     fun getAuthorFromStory(story: Story, userId: String): Author {
         return story.authors.filter { it.id == userId }[0]
     }

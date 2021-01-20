@@ -6,10 +6,12 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/fragmentFullScreenStory_storyText"
+        android:id="@+id/full_tvStoryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:lineHeight="24dp"
         tools:text="@sample/story_long" />
 

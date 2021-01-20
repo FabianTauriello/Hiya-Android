@@ -9,12 +9,13 @@ import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.github.fabiantauriello.hiya.databinding.FragmentFinishedStoriesBinding
+import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.QueryStatus
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.ui.main.inprogress.StoryListItemClickListener
 import io.github.fabiantauriello.hiya.viewmodels.StoriesViewModel
 
-class FinishedStoriesFragment : Fragment(), StoryListItemClickListener {
+class FinishedStoriesFragment : Fragment(), StoryListItemClickListener, LikedItemClickListener {
 
     private val TAG = this::class.java.name
 
@@ -24,9 +25,11 @@ class FinishedStoriesFragment : Fragment(), StoryListItemClickListener {
 
     private lateinit var adapter: FinishedStoriesAdapter
 
+    private var isLiked = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = FinishedStoriesAdapter(arrayListOf(), this)
+        adapter = FinishedStoriesAdapter(arrayListOf(), this, this)
     }
 
     override fun onCreateView(
@@ -55,10 +58,16 @@ class FinishedStoriesFragment : Fragment(), StoryListItemClickListener {
                 adapter.updateList(response.data)
             }
         })
+
+
     }
 
     override fun onStoryClick(story: Story) {
 
+    }
+
+    override fun onToggleLike(storyId: String, author: Author, liked: Boolean) {
+        viewModel.updateLikeStatus(storyId, author, liked)
     }
 
 }

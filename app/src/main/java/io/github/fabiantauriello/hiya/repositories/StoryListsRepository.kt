@@ -2,10 +2,12 @@ package io.github.fabiantauriello.hiya.repositories
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.app.Hiya
+import io.github.fabiantauriello.hiya.domain.Author
 import io.github.fabiantauriello.hiya.domain.FirestoreResponse
 import io.github.fabiantauriello.hiya.domain.Story
 import io.github.fabiantauriello.hiya.util.Utils
@@ -67,6 +69,17 @@ class StoryListsRepository {
             }
             finishedStoryList.value = if (finTempList.isEmpty()) FirestoreResponse.success(null) else FirestoreResponse.success(finTempList)
             likedStoryList.value = if (likedTempList.isEmpty()) FirestoreResponse.success(null) else FirestoreResponse.success(likedTempList)
+        }
+    }
+
+    fun updateLikeStatus(storyId: String, author: Author, liked: Boolean) {
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        db.runBatch { batch ->
+            // remove original
+            batch.update(storyRef, "authors", FieldValue.arrayRemove(author))
+            // make change and update liked status
+            author.liked = liked
+            batch.update(storyRef, "authors", FieldValue.arrayUnion(author))
         }
     }
 }

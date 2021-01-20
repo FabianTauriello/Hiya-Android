@@ -37,7 +37,7 @@ class FullScreenStoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // initialize story text view
-        binding.fragmentFullScreenStoryStoryText.text = viewModel.story.value?.data?.text
+        binding.fullTvStoryText.text = viewModel.story.value?.data?.text
     }
 
     override fun onAttach(context: Context) {

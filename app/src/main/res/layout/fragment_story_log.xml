@@ -31,7 +31,7 @@
             android:paddingStart="10dp"
             android:paddingTop="8dp"
             android:paddingEnd="10dp"
-            android:text="@={vm.story.data.text}"
+            android:text="@{vm.story.data.text}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,10 +47,23 @@
             android:clickable="true"
             android:enabled="false"
             android:src="@drawable/ic_send_btn"
-            android:tooltipText="@{vm.story.data.nextTurn}"
-            android:visibility="@{vm.story.data.nextTurn.equals(hiya.Companion.userId) ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:backgroundTint="@color/green_accent"
+            app:layout_constraintBottom_toTopOf="@+id/log_tvNextTurnSignal"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/log_tvNextTurnSignal"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/next_turn_signal_shape"
+            android:gravity="center"
+            android:text="awaiting co-author input..."
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:visibility="@{vm.story.data.nextTurn.equals(hiya.Companion.userId) ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

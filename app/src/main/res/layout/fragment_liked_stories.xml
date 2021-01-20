@@ -31,7 +31,7 @@
             android:layout_height="0dp"
             android:gravity="center"
             android:visibility="@{vm.likedStoryList.queryStatus == QueryStatus.SUCCESS &amp;&amp; vm.likedStoryList.data == null ? View.VISIBLE : View.GONE}"
-            android:text="You haven't liked any stories yet. Hit the like button for them to appear hear."
+            android:text="You haven't liked any stories yet. Hit the like button for them to appear here."
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

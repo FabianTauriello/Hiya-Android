@@ -12,14 +12,23 @@ class StoryLogViewModel : ViewModel() {
 
     private val repo = StoryLogRepository()
 
-    val addNewTextStatus = repo.addNewTextStatus
-
-    val createNewStoryStatus = repo.createNewStoryStatus
-
+    // don't update here anything directly. It's updated on the fly
     val story = repo.story
+
+    fun createNewStory(coAuthor: User) {
+        repo.createNewStory(coAuthor)
+    }
+
+    fun updateStoryId(newStoryId: String) {
+        repo.updateStoryId(newStoryId)
+    }
 
     fun listenForChangesToStory() {
         repo.listenForChangesToStory()
+    }
+
+    fun updateText(newText: String) {
+        repo.updateText(newText)
     }
 
     fun addAuthorToDoneList() {
@@ -30,28 +39,16 @@ class StoryLogViewModel : ViewModel() {
         repo.removeAuthorFromDoneList()
     }
 
-    fun createNewStory(coAuthor: User) {
-        repo.createNewStory(coAuthor)
+    fun updateTags(newTags: ArrayList<String>) {
+        repo.updateTags(newTags)
     }
 
-    fun addToStoryText(startIndex: Int, endIndex: Int) { // todo I just realized that this won't work either because the new text entered could be exactly the same as the previous text
-        Log.d(TAG, "start: $startIndex")
-        Log.d(TAG, "end: $endIndex")
-        val text = story.value?.data?.text?.subSequence(startIndex, endIndex).toString()
-        repo.addToStoryText(text)
-    }
-
-    fun updateStory(updates: Map<String, Any>) {
-        repo.updateStory(updates)
-    }
-
-    fun updateStoryId(newStoryId: String) {
-        repo.updateStoryId(newStoryId)
+    fun updateTitle(newTitle: String) {
+        repo.updateTitle(newTitle)
     }
 
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "onCleared: clearing")
     }
-
 }

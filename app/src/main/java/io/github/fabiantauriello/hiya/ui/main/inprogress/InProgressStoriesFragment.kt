@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.fabiantauriello.hiya.R
@@ -67,6 +69,7 @@ class InProgressStoriesFragment : Fragment(), StoryListItemClickListener {
 
         // observe in progress stories livedata and update rv
         viewModel.inProgressStoryList.observe(viewLifecycleOwner, { response ->
+            Log.d(TAG, "observed: called with response...$response")
             if (response.queryStatus == QueryStatus.SUCCESS) {
                 adapter.updateList(response.data)
             }

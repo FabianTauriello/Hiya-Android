@@ -41,44 +41,6 @@ class StoryLogRepository {
         }
     }
 
-    fun addToStoryText(newWord: String) {
-        db.runTransaction { transaction ->
-            val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-            val snapshot = transaction.get(storyRef)
-
-            val timestamp = System.currentTimeMillis().toString()
-            val coAuthorId = Utils.getCoAuthorFromStory(snapshot.toObject(Story::class.java)!!).id
-            val newWordCount = snapshot.getDouble("wordCount")!! + 1
-            var newText = snapshot.getString("text")!!
-            if (newText.isNotEmpty()) {
-                newText += " "
-            }
-            newText += newWord
-
-            // update fields in db
-            transaction.update(storyRef, "lastUpdateTimestamp", timestamp)
-            transaction.update(storyRef, "wordCount", newWordCount)
-            transaction.update(storyRef, "nextTurn", coAuthorId)
-            transaction.update(storyRef, "text", newText)
-
-            // Success
-            null
-        }
-            .addOnSuccessListener {
-                // update newWordStatus LiveData
-                addNewTextStatus.value = FirestoreResponseWithoutData.success()
-            }
-            .addOnFailureListener { e ->
-                addNewTextStatus.value = FirestoreResponseWithoutData.error(e.message.toString())
-            }
-    }
-
-
-    fun updateStory(updates: Map<String, Any>) {
-        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
-        storyRef.update(updates)
-    }
-
     fun createNewStory(coAuthor: User) {
         // Initialize Firebase refs
         val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document()
@@ -92,6 +54,7 @@ class StoryLogRepository {
             text = "",
             lastUpdateTimestamp = newTimestamp,
             finished = false,
+            tags = arrayListOf(),
             wordCount = 0,
             nextTurn = Hiya.userId,
             authorIds = arrayListOf(Hiya.userId, coAuthor.id),
@@ -110,6 +73,31 @@ class StoryLogRepository {
             }
             .addOnFailureListener { e ->
                 createNewStoryStatus.value = FirestoreResponseWithoutData.error(e.message.toString())
+            }
+    }
+
+    fun updateStoryId(newStoryId: String) {
+        storyId = newStoryId
+    }
+
+    fun updateText(newText: String) {
+        val storyRef = Firebase.firestore.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        db.runBatch { batch ->
+            val timestamp = System.currentTimeMillis().toString()
+            val newWordCount = newText.split("\\s+".toRegex()).toTypedArray().size
+            val coAuthorId = Utils.getCoAuthorFromStory(story.value?.data!!).id
+
+            // update fields in db
+            batch.update(storyRef, "lastUpdateTimestamp", timestamp)
+            batch.update(storyRef, "wordCount", newWordCount)
+            batch.update(storyRef, "nextTurn", coAuthorId)
+            batch.update(storyRef, "text", newText)
+        }
+            .addOnSuccessListener {
+                addNewTextStatus.value = FirestoreResponseWithoutData.success()
+            }
+            .addOnFailureListener { e ->
+                addNewTextStatus.value = FirestoreResponseWithoutData.error(e.message.toString())
             }
     }
 
@@ -136,9 +124,14 @@ class StoryLogRepository {
         }
     }
 
-    fun updateStoryId(newStoryId: String) {
-        storyId = newStoryId // TODO maybe just update _story property in this class instead with the new ID
+    fun updateTags(newTags: ArrayList<String>) {
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        storyRef.update("tags", newTags)
     }
 
+    fun updateTitle(newTitle: String) {
+        val storyRef = db.collection(Hiya.STORIES_COLLECTION_PATH).document(storyId)
+        storyRef.update("title", newTitle)
+    }
 
 }

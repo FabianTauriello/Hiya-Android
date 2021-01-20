@@ -7,4 +7,34 @@
     <string name="bottom_nav_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name="story_tags">
+        <item>Classic</item>
+        <item>Crime/Detective</item>
+        <item>Epic</item>
+        <item>Fable</item>
+        <item>Fairy tale</item>
+        <item>Fantasy</item>
+        <item>Folktale</item>
+        <item>Gothic</item>
+        <item>Historical</item>
+        <item>Horror</item>
+        <item>Humor</item>
+        <item>Legend</item>
+        <item>Magical</item>
+        <item>Mystery</item>
+        <item>Mythology</item>
+        <item>Realistic</item>
+        <item>Romance</item>
+        <item>Satire</item>
+        <item>Science fiction</item>
+        <item>Spy</item>
+        <item>Superhero</item>
+        <item>Swashbuckler</item>
+        <item>Tall tale</item>
+        <item>Theological</item>
+        <item>Suspense/Thriller</item>
+        <item>Travel</item>
+        <item>Western</item>
+    </string-array>
+
 </resources>

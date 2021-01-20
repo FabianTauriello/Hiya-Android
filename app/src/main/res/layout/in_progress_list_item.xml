@@ -27,7 +27,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:img="@{coAuthor.profilePic}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
@@ -35,13 +35,14 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inProItem_tvTitle"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:textStyle="bold"
             android:text="@{coAuthor.name}"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/inProItem_tvStorySnippet"
             app:layout_constraintEnd_toStartOf="@+id/inProItem_tvTimestamp"
             app:layout_constraintHorizontal_bias="0.0"
@@ -52,17 +53,18 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inProItem_tvStorySnippet"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@{TextUtils.isEmpty(story.text) ? `Not yet started` : story.text}"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
             app:layout_constraintEnd_toStartOf="@+id/inProItem_tvWordCount"
             app:layout_constraintStart_toEndOf="@+id/inProItem_ivPic"
             app:layout_constraintTop_toBottomOf="@+id/inProItem_tvTitle"
-            android:text="@{TextUtils.isEmpty(story.text) ? `Not yet started` : story.text}"
             tools:text="@sample/story_long" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -88,6 +90,31 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/inProItem_tvStorySnippet"
             tools:text="@sample/word_count" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/inProItem_chipGrp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

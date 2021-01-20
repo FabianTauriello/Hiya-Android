@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
+import com.google.android.material.transition.MaterialContainerTransform
 import io.github.fabiantauriello.hiya.R
 import io.github.fabiantauriello.hiya.app.Hiya
 import io.github.fabiantauriello.hiya.databinding.FragmentStoryLogBinding
@@ -31,15 +32,13 @@ class StoryLogFragment : Fragment() {
 
     private var isDone = false
 
-    var storyText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setHasOptionsMenu(true)
-        storyText = args.story?.text ?: ""
     }
 
+    // returning to fragment picks up here
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,42 +69,37 @@ class StoryLogFragment : Fragment() {
         // VIEW LISTENERS
 
         binding.logFabAddText.setOnClickListener {
-            var startIndex = args.story?.text?.length ?: 0
-            val endIndex = binding.logEtStoryText.text.toString().trim().length
-            viewModel.addToStoryText(startIndex, endIndex)
+            // hide keyboard
+            val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+
+            val newText = binding.logEtStoryText.text.toString().trim()
+            viewModel.updateText(newText)
+            binding.logFabAddText.isEnabled = false
         }
         binding.logEtStoryText.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(sequence: CharSequence?, start: Int, before: Int, count: Int) {
-//                sequence?.let {
-//                    if (!sequence.startsWith(storyText)) {
-//                        if (sequence.length <= storyText.length) {
-//                            // character(s) removed - reset text to pre-existing text
-//                            binding.logEtStoryText.setText(storyText)
-//                        } else {
-//                            // character(s) added - append text
-//                            val newText = sequence.subSequence(storyText.length - 1, sequence.length)
-//                            binding.logEtStoryText.setText(storyText + newText)
-//                        }
-//                        binding.logEtStoryText.setSelection(sequence.count())
-//                    }
-//                }
-            }
 
-            // || sequence.substring(0, storyText.length - 1) == storyText
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(sequence: CharSequence?, start: Int, before: Int, count: Int) {}
+
             override fun afterTextChanged(editable: Editable?) {
+                val storyText = viewModel.story.value?.data?.text ?: ""
+
                 editable?.let {
+                    val newText = editable.subSequence(storyText.length, editable.length).toString()
+
                     // check if user is trying to delete pre-existing characters
                     if (!editable.startsWith(storyText)) {
                         // reset text depending on if no characters have been entered
-                        if (editable.length <= storyText.length) {
+                        if (editable.length <= storyText.length) {          // TODO || sequence.substring(0, storyText.length - 1) == storyText
                             // no characters have been added and user has attempted to delete pre-existing characters
                             // reset editable to pre-existing text only
                             binding.logEtStoryText.setText(storyText)
                         } else {
-                            Log.d(TAG, "afterTextChanged: here")
                             // characters have been added and user has attempted to delete pre-existing characters
                             // reset editable to pre-existing text plus any new text entered
-                            val newText = editable.subSequence(storyText.length - 1, editable.length)
+//                            val newText = editable.subSequence(storyText.length - 1, editable.length)
                             binding.logEtStoryText.setText(storyText + newText)
                         }
                         // move cursor to end
@@ -119,8 +113,6 @@ class StoryLogFragment : Fragment() {
                     }
                 }
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         })
 
 
@@ -167,13 +159,13 @@ class StoryLogFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "log onDestroy: called $id")
+    override fun onStop() {
+        super.onStop()
 
         // Hide keyboard if shown
         val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
     }
+
 
 }
